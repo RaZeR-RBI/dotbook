@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Console = Colorful.Console;
 using static DotBook.Logger;
+using DotBook.Model;
 
 namespace DotBook
 {
@@ -51,8 +52,8 @@ namespace DotBook
                 Fatal("The specified directory does not exist");
 
             Info($"Loading code from '{input}'");
-            var nodes = SyntaxNodeCollection.FromFolder(input).ToList();
-            var sourceInfo = new SourceInfo(nodes);
+            var nodes = CompilationUnits.FromFolder(input);
+            var sourceInfo = new SourceInfo(nodes.ToList());
         }
     }
 }
