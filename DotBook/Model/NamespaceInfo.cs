@@ -19,6 +19,8 @@ namespace DotBook.Model
         private HashSet<EnumInfo> _enums = new HashSet<EnumInfo>();
         public IReadOnlyCollection<EnumInfo> Enums => _enums;
 
+        private HashSet<InterfaceInfo> _interfaces = new HashSet<InterfaceInfo>();
+        public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
         public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
             Name = declaration.Name.ToString();
@@ -33,10 +35,13 @@ namespace DotBook.Model
                         new ClassInfo(classDecl, this).AddOrReuse(classDecl, _classes);
                         break;
                     case EnumDeclarationSyntax enumDecl:
-
+                        _enums.Add(new EnumInfo(enumDecl, this));
                         break;
                     case StructDeclarationSyntax structDecl:
-
+                        new StructInfo(structDecl, this).AddOrReuse(structDecl, _structs);
+                        break;
+                    case InterfaceDeclarationSyntax intDecl:
+                        new InterfaceInfo(intDecl, this).AddOrReuse(intDecl, _interfaces);
                         break;
                 }
             }

@@ -7,15 +7,29 @@ namespace DotBook.Model
 {
     public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>
     {
-        public IReadOnlyCollection<Modifier> Modifiers => throw new NotImplementedException();
+        private HashSet<Modifier> _modifiers = new HashSet<Modifier>();
+        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
-        public string Name => throw new NotImplementedException();
+        public string Name { get; }
+        public string FullName { get => $"{Parent.FullName}.{Name}"; }
+        public INameable Parent { get; }
 
-        public string FullName => throw new NotImplementedException();
+        public StructInfo(StructDeclarationSyntax source, INameable parent) =>
+            (Name, Parent) = (source.Identifier.Text, parent);
 
         public void Populate(StructDeclarationSyntax source)
         {
-            throw new NotImplementedException();
+            // TODO
         }
+
+        public override bool Equals(object obj) => Equals(obj as StructInfo);
+
+        private bool Equals(StructInfo other) =>
+            (other != null) && (FullName == other.FullName);
+
+        public override string ToString() => FullName;
+
+        public override int GetHashCode() =>
+            733961487 + EqualityComparer<string>.Default.GetHashCode(FullName);
     }
 }
