@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DotBook.Model
@@ -19,7 +20,7 @@ namespace DotBook.Model
 
         public void Populate(ClassDeclarationSyntax source)
         {
-            // TODO
+            _modifiers = source.Modifiers.ParseModifiers();
         }
 
         public override bool Equals(object obj) => Equals(obj as ClassInfo);
