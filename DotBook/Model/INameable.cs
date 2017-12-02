@@ -7,5 +7,6 @@ namespace DotBook.Model
     public interface INameable
     {
         string Name { get; }
+        string FullName { get; }
     }
 }

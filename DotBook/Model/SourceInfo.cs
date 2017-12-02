@@ -17,14 +17,9 @@ namespace DotBook.Model
 
         private void Process(CompilationUnitSyntax root)
         {
-            var namespaceNode = root.Members.First() as NamespaceDeclarationSyntax;
-            var namespaceInfo = GetNamespace(namespaceNode);
-        }
-
-        private NamespaceInfo GetNamespace(NamespaceDeclarationSyntax node)
-        {
-            _namespaces.Add(new NamespaceInfo(node));
-            return _namespaces.First(n => n.Equals(node));
+            if (!root.Members.Any()) return;
+            var node = root.Members.First() as NamespaceDeclarationSyntax;
+            new NamespaceInfo(node).AddOrReuse(node, _namespaces);
         }
 
         public override string ToString() =>

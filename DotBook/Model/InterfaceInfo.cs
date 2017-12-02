@@ -5,15 +5,15 @@ using System.Text;
 
 namespace DotBook.Model
 {
-    public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>
+    public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>
     {
-        public IReadOnlyCollection<Modifier> Modifiers => throw new NotImplementedException();
-
         public string Name => throw new NotImplementedException();
 
         public string FullName => throw new NotImplementedException();
 
-        public void Populate(StructDeclarationSyntax source)
+        public IReadOnlyCollection<Modifier> Modifiers => throw new NotImplementedException();
+
+        public void Populate(InterfaceDeclarationSyntax source)
         {
             throw new NotImplementedException();
         }

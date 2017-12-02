@@ -9,5 +9,7 @@ namespace DotBook.Model
         public IReadOnlyCollection<Modifier> Modifiers => throw new NotImplementedException();
 
         public string Name => throw new NotImplementedException();
+
+        public string FullName => throw new NotImplementedException();
     }
 }

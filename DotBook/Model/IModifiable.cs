@@ -15,6 +15,8 @@ namespace DotBook.Model
         Const,
         Event,
         Extern,
+        Explicit,
+        Implicit,
         New,
         Override,
         Partial,

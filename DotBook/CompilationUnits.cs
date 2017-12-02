@@ -18,13 +18,18 @@ namespace DotBook
             Func<string, bool> filenamePredicate = null) =>
             Directory.EnumerateFiles(folder, "*.cs", SearchOption.AllDirectories)
             .Where(filenamePredicate ?? allFiles)
-            .Select(Parse);
+            .Select(ParseFile);
 
-        private static CompilationUnitSyntax Parse(string file)
+        public static IEnumerable<CompilationUnitSyntax> FromString(params string[] sources) =>
+            sources.Select(ParseString);
+
+        private static CompilationUnitSyntax ParseString(string input) =>
+            CSharpSyntaxTree.ParseText(input).GetRoot() as CompilationUnitSyntax;
+
+        private static CompilationUnitSyntax ParseFile(string file)
         {
             Log($"Parsing file '{file}'");
-            return CSharpSyntaxTree.ParseText(File.ReadAllText(file)).GetRoot()
-                as CompilationUnitSyntax;
+            return ParseString(File.ReadAllText(file));
         }
     }
 }

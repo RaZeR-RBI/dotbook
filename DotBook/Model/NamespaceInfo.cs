@@ -1,21 +1,24 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DotBook.Model
 {
     public class NamespaceInfo : INameable, IPartial<NamespaceDeclarationSyntax>
     {
         public string Name { get; }
+        public string FullName => Name;
 
-        private List<ClassInfo> _classes = new List<ClassInfo>();
+        private HashSet<ClassInfo> _classes = new HashSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
 
-        private List<StructInfo> _structs = new List<StructInfo>();
+        private HashSet<StructInfo> _structs = new HashSet<StructInfo>();
         public IReadOnlyCollection<StructInfo> Structs => _structs;
 
-        private List<EnumInfo> _enums = new List<EnumInfo>();
+        private HashSet<EnumInfo> _enums = new HashSet<EnumInfo>();
         public IReadOnlyCollection<EnumInfo> Enums => _enums;
+
 
         public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
             Name = declaration.Name.ToString();
@@ -26,18 +29,17 @@ namespace DotBook.Model
             {
                 switch (member)
                 {
-                    case ClassDeclarationSyntax @class:
+                    case ClassDeclarationSyntax classDecl:
+                        new ClassInfo(classDecl, this).AddOrReuse(classDecl, _classes);
+                        break;
+                    case EnumDeclarationSyntax enumDecl:
 
                         break;
-                    case EnumDeclarationSyntax @enum:
-
-                        break;
-                    case StructDeclarationSyntax @struct:
+                    case StructDeclarationSyntax structDecl:
 
                         break;
                 }
             }
-            throw new NotImplementedException();
         }
 
         public override bool Equals(object obj) => Equals(obj as NamespaceInfo);
@@ -50,5 +52,7 @@ namespace DotBook.Model
 
         public override int GetHashCode() => 
             539060726 + EqualityComparer<string>.Default.GetHashCode(Name);
+
+        public override string ToString() => FullName;
     }
 }
