@@ -54,5 +54,37 @@ namespace DotBook.Tests.Model
                 Expect(Modifier.Internal, Modifier.Sealed),
                 Actual(classes, "ImInternalSealed"));
         }
+
+        [Fact]
+        public void ShouldHandleInnerStructures()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    class OuterClass
+                    {
+                        class InnerClass {}
+                        struct InnerStruct {}
+                        interface InnerInterface {}
+                        enum InnerEnum {}
+                    }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.Single(info.Classes);
+            Assert.Contains(info.Classes,
+                c => c.FullName == "MyAssembly.OuterClass.InnerClass");
+            Assert.Single(info.Structs);
+            Assert.Contains(info.Structs,
+                s => s.FullName == "MyAssembly.OuterClass.InnerStruct");
+            Assert.Single(info.Interfaces);
+            Assert.Contains(info.Interfaces,
+                i => i.FullName == "MyAssembly.OuterClass.InnerInterface");
+            Assert.Single(info.Enums);
+            Assert.Contains(info.Enums,
+                e => e.FullName == "MyAssembly.OuterClass.InnerEnum");
+        }
     }
 }

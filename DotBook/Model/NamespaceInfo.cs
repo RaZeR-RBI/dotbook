@@ -28,23 +28,7 @@ namespace DotBook.Model
         public void Populate(NamespaceDeclarationSyntax root)
         {
             foreach (var member in root.Members)
-            {
-                switch (member)
-                {
-                    case ClassDeclarationSyntax classDecl:
-                        new ClassInfo(classDecl, this).AddOrReuse(classDecl, _classes);
-                        break;
-                    case EnumDeclarationSyntax enumDecl:
-                        _enums.Add(new EnumInfo(enumDecl, this));
-                        break;
-                    case StructDeclarationSyntax structDecl:
-                        new StructInfo(structDecl, this).AddOrReuse(structDecl, _structs);
-                        break;
-                    case InterfaceDeclarationSyntax intDecl:
-                        new InterfaceInfo(intDecl, this).AddOrReuse(intDecl, _interfaces);
-                        break;
-                }
-            }
+                this.AddAsChild(member, _classes, _structs, _interfaces, _enums);
         }
 
         public override bool Equals(object obj) => Equals(obj as NamespaceInfo);
