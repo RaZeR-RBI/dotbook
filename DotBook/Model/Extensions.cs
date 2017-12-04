@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using DotBook.Model.Entities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,10 @@ namespace DotBook.Model
     public static class Extensions
     {
 
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source,
-            IEqualityComparer<T> comparer = null) => new HashSet<T>(source, comparer);
+        public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source,
+            IComparer<T> comparer = null) => new SortedSet<T>(source, comparer);
 
-        public static void AddOrReuse<T1, T2>(this T2 info, T1 decl, HashSet<T2> set)
+        public static void AddOrReuse<T1, T2>(this T2 info, T1 decl, SortedSet<T2> set)
             where T2 : IPartial<T1>
         {
             if (set == null) return;
@@ -22,18 +23,12 @@ namespace DotBook.Model
             savedInfo.Populate(decl);
         }
 
-        public static Modifier AsModifierEnum(this SyntaxToken token) =>
-            Enum.Parse<Modifier>(token.Text.FirstCharToUpper());
-
-        public static HashSet<Modifier> ParseModifiers(this SyntaxTokenList tokens) =>
-            tokens.Select(AsModifierEnum).ToHashSet();
-
         public static void AddAsChild(this INameable parent, 
             MemberDeclarationSyntax s,
-            HashSet<ClassInfo> classes,
-            HashSet<StructInfo> structs,
-            HashSet<InterfaceInfo> interfaces,
-            HashSet<EnumInfo> enums)
+            SortedSet<ClassInfo> classes,
+            SortedSet<StructInfo> structs,
+            SortedSet<InterfaceInfo> interfaces,
+            SortedSet<EnumInfo> enums)
         {
             // ugly but works
             switch (s)

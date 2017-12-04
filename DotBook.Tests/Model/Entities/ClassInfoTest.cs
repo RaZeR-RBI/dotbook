@@ -1,11 +1,12 @@
 ﻿using DotBook.Model;
+using DotBook.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace DotBook.Tests.Model
+namespace DotBook.Tests.Model.Entities
 {
     public class ClassInfoTest
     {
@@ -25,6 +26,9 @@ namespace DotBook.Tests.Model
         [Fact]
         public void ShouldHandleModifiers()
         {
+            /* Note: Top-level types cannot be private or protected,
+             * it's only for test purposes
+             */
             var source = @"
                 namespace MyAssembly
                 {
@@ -32,13 +36,15 @@ namespace DotBook.Tests.Model
                     class ImInternal { }
                     protected class ImProtected { }
                     public static class ImPublicStatic { }
-                    internal sealed class ImInternalSealed { }
+                    sealed class ImSealed { }
+                    abstract class ImAbstract { }
+                    unsafe class ImUnsafe { }
                 }
             ";
 
             var classes = Act(source);
 
-            Assert.Equal(5, classes.Count);
+            Assert.Equal(7, classes.Count);
             Assert.Equal(
                 Expect(Modifier.Private),
                 Actual(classes, "ImPrivate"));
@@ -53,7 +59,13 @@ namespace DotBook.Tests.Model
                 Actual(classes, "ImPublicStatic"));
             Assert.Equal(
                 Expect(Modifier.Internal, Modifier.Sealed),
-                Actual(classes, "ImInternalSealed"));
+                Actual(classes, "ImSealed"));
+            Assert.Equal(
+                Expect(Modifier.Internal, Modifier.Abstract),
+                Actual(classes, "ImAbstract"));
+            Assert.Equal(
+                Expect(Modifier.Internal, Modifier.Unsafe),
+                Actual(classes, "ImUnsafe"));
         }
 
         [Fact]

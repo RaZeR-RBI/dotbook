@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DotBook.Model
+namespace DotBook.Model.Entities
 {
     public class EnumInfo : INameable, IModifiable
     {
-        private HashSet<Modifier> _modifiers = new HashSet<Modifier>();
+        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         public string Name { get; }

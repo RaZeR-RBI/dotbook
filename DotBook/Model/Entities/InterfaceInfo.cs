@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DotBook.Model
+namespace DotBook.Model.Entities
 {
-    public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>
+    public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>,
+        IComparable
     {
-        private HashSet<Modifier> _modifiers = new HashSet<Modifier>();
+        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         public string Name { get; }
@@ -31,5 +32,8 @@ namespace DotBook.Model
 
         public override int GetHashCode() =>
             733961487 + EqualityComparer<string>.Default.GetHashCode(FullName);
+
+        public int CompareTo(object obj) =>
+            FullName.CompareTo((obj as InterfaceInfo)?.FullName);
     }
 }

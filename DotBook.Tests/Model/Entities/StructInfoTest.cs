@@ -1,11 +1,12 @@
 ﻿using DotBook.Model;
+using DotBook.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace DotBook.Tests.Model
+namespace DotBook.Tests.Model.Entities
 {
     public class StructInfoTest
     {
@@ -25,6 +26,9 @@ namespace DotBook.Tests.Model
         [Fact]
         public void ShouldHandleModifiers()
         {
+            /* Note: Top-level types cannot be private,
+             * it's only for test purposes
+             */
             var source = @"
                 namespace MyAssembly
                 {
@@ -32,12 +36,13 @@ namespace DotBook.Tests.Model
                     struct ImInternal { }
                     public struct ImPublic { }
                     internal struct ImInternalToo { }
+                    unsafe struct ImUnsafe { }
                 }
             ";
 
             var structs = Act(source);
 
-            Assert.Equal(4, structs.Count);
+            Assert.Equal(5, structs.Count);
             Assert.Equal(
                 Expect(Modifier.Private), Actual(structs, "ImPrivate"));
             Assert.Equal(
@@ -46,6 +51,9 @@ namespace DotBook.Tests.Model
                 Expect(Modifier.Public), Actual(structs, "ImPublic"));
             Assert.Equal(
                 Expect(Modifier.Internal), Actual(structs, "ImInternalToo"));
+            Assert.Equal(
+                Expect(Modifier.Internal, Modifier.Unsafe),
+                Actual(structs, "ImUnsafe"));
         }
 
         [Fact]

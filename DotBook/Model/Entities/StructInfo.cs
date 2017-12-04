@@ -3,27 +3,28 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DotBook.Model
+namespace DotBook.Model.Entities
 {
-    public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>
+    public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>,
+        IComparable
     {
-        private HashSet<Modifier> _modifiers = new HashSet<Modifier>();
+        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
         
-        private HashSet<ClassInfo> _classes = new HashSet<ClassInfo>();
+        private SortedSet<ClassInfo> _classes = new SortedSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
 
-        private HashSet<StructInfo> _structs = new HashSet<StructInfo>();
+        private SortedSet<StructInfo> _structs = new SortedSet<StructInfo>();
         public IReadOnlyCollection<StructInfo> Structs => _structs;
 
-        private HashSet<EnumInfo> _enums = new HashSet<EnumInfo>();
+        private SortedSet<EnumInfo> _enums = new SortedSet<EnumInfo>();
         public IReadOnlyCollection<EnumInfo> Enums => _enums;
 
-        private HashSet<InterfaceInfo> _interfaces = new HashSet<InterfaceInfo>();
+        private SortedSet<InterfaceInfo> _interfaces = new SortedSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
 
@@ -32,9 +33,10 @@ namespace DotBook.Model
 
         public void Populate(StructDeclarationSyntax source)
         {
-            _modifiers = source.Modifiers.ParseModifiers();
-            if (_modifiers.Count == 0)
-                _modifiers.Add(Parent is NamespaceInfo ?
+            _modifiers = source.Modifiers
+                .ParseModifiers()
+                .WithDefaultVisibility(
+                    Parent is NamespaceInfo ?
                     Modifier.Internal : Modifier.Private);
 
             foreach (var member in source.Members)
@@ -50,5 +52,8 @@ namespace DotBook.Model
 
         public override int GetHashCode() =>
             733961487 + EqualityComparer<string>.Default.GetHashCode(FullName);
+
+        public int CompareTo(object obj) =>
+            FullName.CompareTo((obj as StructInfo)?.FullName);
     }
 }

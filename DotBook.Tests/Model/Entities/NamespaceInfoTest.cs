@@ -1,11 +1,12 @@
 ﻿using DotBook.Model;
+using DotBook.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace DotBook.Tests.Model
+namespace DotBook.Tests.Model.Entities
 {
     public class NamespaceInfoTest
     {

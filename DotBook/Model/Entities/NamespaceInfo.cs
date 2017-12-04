@@ -3,23 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DotBook.Model
+namespace DotBook.Model.Entities
 {
-    public class NamespaceInfo : INameable, IPartial<NamespaceDeclarationSyntax>
+    public class NamespaceInfo : INameable, IPartial<NamespaceDeclarationSyntax>,
+        IComparable
     {
         public string Name { get; }
         public string FullName => Name;
 
-        private HashSet<ClassInfo> _classes = new HashSet<ClassInfo>();
+        private SortedSet<ClassInfo> _classes = new SortedSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
 
-        private HashSet<StructInfo> _structs = new HashSet<StructInfo>();
+        private SortedSet<StructInfo> _structs = new SortedSet<StructInfo>();
         public IReadOnlyCollection<StructInfo> Structs => _structs;
 
-        private HashSet<EnumInfo> _enums = new HashSet<EnumInfo>();
+        private SortedSet<EnumInfo> _enums = new SortedSet<EnumInfo>();
         public IReadOnlyCollection<EnumInfo> Enums => _enums;
 
-        private HashSet<InterfaceInfo> _interfaces = new HashSet<InterfaceInfo>();
+        private SortedSet<InterfaceInfo> _interfaces = new SortedSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
         public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
@@ -43,5 +44,8 @@ namespace DotBook.Model
             539060726 + EqualityComparer<string>.Default.GetHashCode(Name);
 
         public override string ToString() => FullName;
+
+        public int CompareTo(object obj) => 
+            FullName.CompareTo((obj as NamespaceInfo)?.FullName);
     }
 }
