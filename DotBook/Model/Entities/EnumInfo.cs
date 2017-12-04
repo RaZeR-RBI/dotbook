@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using DotBook.Utils;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,10 @@ namespace DotBook.Model.Entities
     {
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
+
+        private OrderedDictionary<string, ulong> _members = 
+            new OrderedDictionary<string, ulong>();
+        public IReadOnlyDictionary<string, ulong> Members => _members;
 
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
