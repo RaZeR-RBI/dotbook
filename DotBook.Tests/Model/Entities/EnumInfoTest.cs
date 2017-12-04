@@ -51,5 +51,53 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(
                 Expect(Modifier.Internal), Actual(enums, "ImInternalToo"));
         }
+
+        [Fact]
+        public void ShouldSupportUnderlyingType()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    enum DefaultEnum { }
+                    enum LongEnum : long { }
+                    enum ByteEnum : byte { }
+                }
+            ";
+
+            var enums = Act(source);
+
+            Assert.Equal(3, enums.Count);
+            Assert.Contains(enums, 
+                e => e.Name == "DefaultEnum" && e.UnderlyingType == "int");
+            Assert.Contains(enums,
+                e => e.Name == "LongEnum" && e.UnderlyingType == "long");
+            Assert.Contains(enums,
+                e => e.Name == "ByteEnum" && e.UnderlyingType == "byte");
+        }
+
+        [Fact]
+        public void ShouldParseMembers()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    enum MyEnum
+                    {
+                        One = 1,
+                        Two,
+                        Four = 4,
+                        FourToo = Four
+                    }
+                }
+            ";
+
+            var members = Act(source).First().Members;
+
+            Assert.Equal(4, members.Count);
+            Assert.Contains(members, m => m.Key == "One" && m.Value == "1");
+            Assert.Contains(members, m => m.Key == "Two" && m.Value == "");
+            Assert.Contains(members, m => m.Key == "Four" && m.Value == "4");
+            Assert.Contains(members, m => m.Key == "FourToo" && m.Value == "Four");
+        }
     }
 }
