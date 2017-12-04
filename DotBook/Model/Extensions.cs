@@ -25,13 +25,8 @@ namespace DotBook.Model
         public static Modifier AsModifierEnum(this SyntaxToken token) =>
             Enum.Parse<Modifier>(token.Text.FirstCharToUpper());
 
-        public static HashSet<Modifier> ParseModifiers(this SyntaxTokenList tokens)
-        {
-            var result = tokens.Select(m => m.AsModifierEnum())
-                .ToHashSet();
-            if (result.Count == 0) result.Add(Modifier.Private);
-            return result;
-        }
+        public static HashSet<Modifier> ParseModifiers(this SyntaxTokenList tokens) =>
+            tokens.Select(AsModifierEnum).ToHashSet();
 
         public static void AddAsChild(this INameable parent, 
             MemberDeclarationSyntax s,

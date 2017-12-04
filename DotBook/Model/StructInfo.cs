@@ -19,7 +19,10 @@ namespace DotBook.Model
 
         public void Populate(StructDeclarationSyntax source)
         {
-            // TODO
+            _modifiers = source.Modifiers.ParseModifiers();
+            if (_modifiers.Count == 0)
+                _modifiers.Add(Parent is NamespaceInfo ?
+                    Modifier.Internal : Modifier.Private);
         }
 
         public override bool Equals(object obj) => Equals(obj as StructInfo);

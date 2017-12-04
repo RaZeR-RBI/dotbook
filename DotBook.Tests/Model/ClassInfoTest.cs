@@ -17,7 +17,8 @@ namespace DotBook.Tests.Model
         private IReadOnlyCollection<Modifier> Expect(params Modifier[] modifier) =>
             modifier.ToList();
 
-        private IReadOnlyCollection<Modifier> Actual(IReadOnlyCollection<ClassInfo> classes,
+        private IReadOnlyCollection<Modifier> Actual(
+            IReadOnlyCollection<ClassInfo> classes,
             string name) =>
             classes.First(c => c.Name == name).Modifiers;
 
@@ -28,7 +29,7 @@ namespace DotBook.Tests.Model
                 namespace MyAssembly
                 {
                     private class ImPrivate { }
-                    class ImPrivateToo { }
+                    class ImInternal { }
                     protected class ImProtected { }
                     public static class ImPublicStatic { }
                     internal sealed class ImInternalSealed { }
@@ -42,8 +43,8 @@ namespace DotBook.Tests.Model
                 Expect(Modifier.Private),
                 Actual(classes, "ImPrivate"));
             Assert.Equal(
-                Expect(Modifier.Private),
-                Actual(classes, "ImPrivateToo"));
+                Expect(Modifier.Internal),
+                Actual(classes, "ImInternal"));
             Assert.Equal(
                 Expect(Modifier.Protected),
                 Actual(classes, "ImProtected"));

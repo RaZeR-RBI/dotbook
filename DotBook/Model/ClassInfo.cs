@@ -33,6 +33,10 @@ namespace DotBook.Model
         public void Populate(ClassDeclarationSyntax source)
         {
             _modifiers = source.Modifiers.ParseModifiers();
+            if (_modifiers.Count == 0)
+                _modifiers.Add(Parent is NamespaceInfo ? 
+                    Modifier.Internal : Modifier.Private);
+
             foreach (var member in source.Members)
                 this.AddAsChild(member, _classes, _structs, _interfaces, _enums);
         }
