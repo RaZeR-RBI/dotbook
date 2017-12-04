@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using DotBook.Model.Members;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,9 @@ namespace DotBook.Model.Entities
         private SortedSet<InterfaceInfo> _interfaces = new SortedSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
+        private SortedSet<FieldInfo> _fields = new SortedSet<FieldInfo>();
+        public IReadOnlyCollection<FieldInfo> Fields => _fields;
+
 
         public ClassInfo(ClassDeclarationSyntax source, INameable parent) =>
             (Name, Parent) = (source.Identifier.Text, parent);
@@ -41,7 +45,8 @@ namespace DotBook.Model.Entities
                     Modifier.Internal : Modifier.Private);
 
             foreach (var member in source.Members)
-                this.AddAsChild(member, _classes, _structs, _interfaces, _enums);
+                this.AddAsChild(member, _classes, _structs, _interfaces, _enums,
+                    _fields);
         }
 
         public override bool Equals(object obj) => Equals(obj as ClassInfo);

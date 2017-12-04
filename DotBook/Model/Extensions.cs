@@ -1,4 +1,5 @@
 ﻿using DotBook.Model.Entities;
+using DotBook.Model.Members;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -25,10 +26,11 @@ namespace DotBook.Model
 
         public static void AddAsChild(this INameable parent, 
             MemberDeclarationSyntax s,
-            SortedSet<ClassInfo> classes,
-            SortedSet<StructInfo> structs,
-            SortedSet<InterfaceInfo> interfaces,
-            SortedSet<EnumInfo> enums)
+            SortedSet<ClassInfo> classes = null,
+            SortedSet<StructInfo> structs = null,
+            SortedSet<InterfaceInfo> interfaces = null,
+            SortedSet<EnumInfo> enums = null,
+            SortedSet<FieldInfo> fields = null)
         {
             // ugly but works
             switch (s)
@@ -44,6 +46,9 @@ namespace DotBook.Model
                     break;
                 case InterfaceDeclarationSyntax intDecl:
                     new InterfaceInfo(intDecl, parent).AddOrReuse(intDecl, interfaces);
+                    break;
+                case FieldDeclarationSyntax fieldDecl:
+                    if (fields != null) fields.Add(new FieldInfo(fieldDecl, parent));
                     break;
             }
         }

@@ -99,5 +99,28 @@ namespace DotBook.Tests.Model.Entities
             Assert.Contains(info.Enums,
                 e => e.FullName == "MyAssembly.OuterClass.InnerEnum");
         }
+
+        [Fact]
+        public void ShouldHandleFields()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    class MyClass
+                    {
+                        int IntField;
+                        string StringField;
+                    }
+                }
+            ";
+
+            var fields = Act(source).First().Fields;
+
+            Assert.Equal(2, fields.Count);
+            Assert.Contains(fields,
+                f => f.Name == "IntField" && f.Type == "int");
+            Assert.Contains(fields,
+                f => f.Name == "StringField" && f.Type == "string");
+        }
     }
 }
