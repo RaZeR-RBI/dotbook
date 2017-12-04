@@ -74,8 +74,10 @@ namespace DotBook.Tests.Model.Members
             var fields = Act(source);
 
             Assert.Equal(2, fields.Count);
-            Assert.Contains(fields, f => f.Name == "SomeInt" && f.Value == null);
-            Assert.Contains(fields, f => f.Name == "DefinedLong" && f.Value == "1337");
+            Assert.Contains(fields, 
+                f => f.Name == "SomeInt" && f.Value == null && f.Type == "int");
+            Assert.Contains(fields, 
+                f => f.Name == "DefinedLong" && f.Value == "1337" && f.Type == "long");
         }
     }
 }

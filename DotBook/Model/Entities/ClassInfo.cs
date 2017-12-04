@@ -8,14 +8,14 @@ using System.Text;
 namespace DotBook.Model.Entities
 {
     public class ClassInfo : INameable, IModifiable, IPartial<ClassDeclarationSyntax>,
-        IComparable
+        IDerivable, IComparable
     {
-        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
-        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
-
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
+
+        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
+        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         private SortedSet<ClassInfo> _classes = new SortedSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
@@ -32,9 +32,19 @@ namespace DotBook.Model.Entities
         private SortedSet<FieldInfo> _fields = new SortedSet<FieldInfo>();
         public IReadOnlyCollection<FieldInfo> Fields => _fields;
 
+        public IReadOnlyCollection<string> BaseTypes => throw new NotImplementedException();
 
-        public ClassInfo(ClassDeclarationSyntax source, INameable parent) =>
-            (Name, Parent) = (source.Identifier.Text, parent);
+        public ClassInfo(ClassDeclarationSyntax source, INameable parent)
+        {
+            var className = source.Identifier.Text;
+            Parent = parent;
+
+            var tpl = source.TypeParameterList;
+            var typeString = tpl != null ? 
+                $"<{string.Join(", ", tpl.Parameters)}>" : "";
+
+            Name = className + typeString;
+        }
 
         public void Populate(ClassDeclarationSyntax source)
         {

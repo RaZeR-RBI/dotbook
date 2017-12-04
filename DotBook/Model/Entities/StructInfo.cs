@@ -6,15 +6,15 @@ using System.Collections.Generic;
 namespace DotBook.Model.Entities
 {
     public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>,
-        IComparable
+        IComparable, IDerivable
     {
-        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
-        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
-
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
-        
+
+        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
+        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
+
         private SortedSet<ClassInfo> _classes = new SortedSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
 
@@ -30,9 +30,19 @@ namespace DotBook.Model.Entities
         private SortedSet<FieldInfo> _fields = new SortedSet<FieldInfo>();
         public IReadOnlyCollection<FieldInfo> Fields => _fields;
 
+        public IReadOnlyCollection<string> BaseTypes => throw new NotImplementedException();
 
-        public StructInfo(StructDeclarationSyntax source, INameable parent) =>
-            (Name, Parent) = (source.Identifier.Text, parent);
+        public StructInfo(StructDeclarationSyntax source, INameable parent)
+        {
+            var structName = source.Identifier.Text;
+            Parent = parent;
+
+            var tpl = source.TypeParameterList;
+            var typeString = tpl != null ?
+                $"<{string.Join(", ", tpl.Parameters)}>" : "";
+
+            Name = structName + typeString;
+        }
 
         public void Populate(StructDeclarationSyntax source)
         {
@@ -43,7 +53,7 @@ namespace DotBook.Model.Entities
                     Modifier.Internal : Modifier.Private);
 
             foreach (var member in source.Members)
-                this.AddAsChild(member, 
+                this.AddAsChild(member,
                     _classes, _structs, _interfaces, _enums,
                     _fields);
         }

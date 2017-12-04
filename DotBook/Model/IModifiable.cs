@@ -15,6 +15,7 @@ namespace DotBook.Model
         Abstract,
         Async,
         Const,
+        Delegate,
         Event,
         Extern,
         Explicit,

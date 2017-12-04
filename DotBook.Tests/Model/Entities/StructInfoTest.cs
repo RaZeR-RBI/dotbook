@@ -98,17 +98,60 @@ namespace DotBook.Tests.Model.Entities
                     {
                         int IntField;
                         string StringField;
+                        (byte, long) MyTuple;
                     }
                 }
             ";
 
             var fields = Act(source).First().Fields;
 
-            Assert.Equal(2, fields.Count);
+            Assert.Equal(3, fields.Count);
             Assert.Contains(fields,
                 f => f.Name == "IntField" && f.Type == "int");
             Assert.Contains(fields,
                 f => f.Name == "StringField" && f.Type == "string");
+            Assert.Contains(fields,
+                f => f.Name == "MyTuple" && f.Type == "(byte, long)");
+        }
+
+
+        [Fact]
+        public void ShouldIncludeTypeParameters()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct { }
+
+                    struct MyStruct<T1, T2> 
+                        where T1 : ISomething
+                        where T2 : new()
+                    { }
+                }
+            ";
+
+            var structs = Act(source);
+
+            Assert.Equal(2, structs.Count);
+            Assert.Contains(structs, s => s.Name == "MyStruct");
+            Assert.Contains(structs, s => s.Name == "MyStruct<T1, T2>");
+        }
+
+        [Fact]
+        public void ShouldIncludeBaseTypes()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct : IInterface, IInterfaceToo<T> { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.Equal(2, info.BaseTypes.Count);
+            Assert.Contains("IInterface", info.BaseTypes);
+            Assert.Contains("IInterfaceToo<T>", info.BaseTypes);
         }
     }
 }

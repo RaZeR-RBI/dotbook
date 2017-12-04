@@ -6,7 +6,7 @@ using System.Text;
 namespace DotBook.Model.Entities
 {
     public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>,
-        IComparable
+        IDerivable, IComparable
     {
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -15,8 +15,19 @@ namespace DotBook.Model.Entities
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
 
-        public InterfaceInfo(InterfaceDeclarationSyntax source, INameable parent) =>
-            (Name, Parent) = (source.Identifier.Text, parent);
+        public IReadOnlyCollection<string> BaseTypes => throw new NotImplementedException();
+
+        public InterfaceInfo(InterfaceDeclarationSyntax source, INameable parent)
+        {
+            var interfaceName = source.Identifier.Text;
+            Parent = parent;
+
+            var tpl = source.TypeParameterList;
+            var typeString = tpl != null ?
+                $"<{string.Join(", ", tpl.Parameters)}>" : "";
+
+            Name = interfaceName + typeString;
+        }
 
         public void Populate(InterfaceDeclarationSyntax source)
         {

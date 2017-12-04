@@ -52,5 +52,44 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(
                 Expect(Modifier.Internal), Actual(interfaces, "ImInternalToo"));
         }
+        
+        [Fact]
+        public void ShouldIncludeTypeParameters()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface { }
+
+                    interface MyInterface<T1, T2> 
+                        where T1 : ISomething
+                        where T2 : new()
+                    { }
+                }
+            ";
+
+            var interfaces = Act(source);
+
+            Assert.Equal(2, interfaces.Count);
+            Assert.Contains(interfaces, i => i.Name == "MyInterface");
+            Assert.Contains(interfaces, i => i.Name == "MyInterface<T1, T2>");
+        }
+
+        [Fact]
+        public void ShouldIncludeBaseTypes()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface : IInterface, IInterfaceToo<T> { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.Equal(2, info.BaseTypes.Count);
+            Assert.Contains("IInterface", info.BaseTypes);
+            Assert.Contains("IInterfaceToo<T>", info.BaseTypes);
+        }
     }
 }
