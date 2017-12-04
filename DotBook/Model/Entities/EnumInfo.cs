@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DotBook.Model.Entities
 {
-    public class EnumInfo : INameable, IModifiable
+    public class EnumInfo : INameable, IModifiable, IComparable
     {
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -14,8 +14,15 @@ namespace DotBook.Model.Entities
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
 
-        public EnumInfo(EnumDeclarationSyntax decl, INameable parent) =>
+        public EnumInfo(EnumDeclarationSyntax decl, INameable parent)
+        {
             (Name, Parent) = (decl.Identifier.Text, parent);
+            _modifiers = decl.Modifiers
+                .ParseModifiers()
+                .WithDefaultVisibility(
+                    Parent is NamespaceInfo ?
+                    Modifier.Internal : Modifier.Private);
+        }
 
         public override bool Equals(object obj) =>
             Equals(obj as EnumInfo);
@@ -25,5 +32,8 @@ namespace DotBook.Model.Entities
 
         public override int GetHashCode() =>
             733961487 + EqualityComparer<string>.Default.GetHashCode(FullName);
+
+        public int CompareTo(object obj) =>
+            FullName.CompareTo((obj as EnumInfo)?.FullName);
     }
 }

@@ -20,7 +20,11 @@ namespace DotBook.Model.Entities
 
         public void Populate(InterfaceDeclarationSyntax source)
         {
-            // TODO
+            _modifiers = source.Modifiers
+                .ParseModifiers()
+                .WithDefaultVisibility(
+                    Parent is NamespaceInfo ?
+                    Modifier.Internal : Modifier.Private);
         }
 
         public override bool Equals(object obj) => Equals(obj as InterfaceInfo);

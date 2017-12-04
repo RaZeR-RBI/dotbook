@@ -144,13 +144,15 @@ namespace DotBook.Tests.Model.Entities
                 namespace MyAssembly
                 {
                     public enum PreciousEnum { }
+                    public enum OtherEnum { }
                 }
             ";
 
             var enums = Act(source).Enums;
 
-            Assert.Single(enums);
+            Assert.Equal(2, enums.Count);
             Assert.Contains(enums, e => e.FullName == "MyAssembly.PreciousEnum");
+            Assert.Contains(enums, e => e.FullName == "MyAssembly.OtherEnum");
         }
     }
 }
