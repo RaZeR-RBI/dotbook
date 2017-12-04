@@ -47,5 +47,37 @@ namespace DotBook.Tests.Model
             Assert.Equal(
                 Expect(Modifier.Internal), Actual(structs, "ImInternalToo"));
         }
+
+        [Fact]
+        public void ShouldHandleInnerStructures()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct OuterStruct
+                    {
+                        class InnerClass {}
+                        struct InnerStruct {}
+                        interface InnerInterface {}
+                        enum InnerEnum {}
+                    }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.Single(info.Classes);
+            Assert.Contains(info.Classes,
+                c => c.FullName == "MyAssembly.OuterStruct.InnerClass");
+            Assert.Single(info.Structs);
+            Assert.Contains(info.Structs,
+                s => s.FullName == "MyAssembly.OuterStruct.InnerStruct");
+            Assert.Single(info.Interfaces);
+            Assert.Contains(info.Interfaces,
+                i => i.FullName == "MyAssembly.OuterStruct.InnerInterface");
+            Assert.Single(info.Enums);
+            Assert.Contains(info.Enums,
+                e => e.FullName == "MyAssembly.OuterStruct.InnerEnum");
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace DotBook.Model
         private HashSet<InterfaceInfo> _interfaces = new HashSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
+
         public ClassInfo(ClassDeclarationSyntax source, INameable parent) =>
             (Name, Parent) = (source.Identifier.Text, parent);
 
