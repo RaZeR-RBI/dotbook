@@ -73,7 +73,7 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(2, interfaces.Count);
             Assert.Contains(interfaces, i => i.Name == "MyInterface");
             Assert.Contains(interfaces, i => i.Name == "MyInterface<T1, T2>");
-        }
+        } 
 
         [Fact]
         public void ShouldIncludeBaseTypes()

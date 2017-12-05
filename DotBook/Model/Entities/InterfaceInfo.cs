@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Entities
 {
@@ -15,18 +16,14 @@ namespace DotBook.Model.Entities
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
 
-        public IReadOnlyCollection<string> BaseTypes => throw new NotImplementedException();
+        private SortedSet<string> _baseTypes = new SortedSet<string>();
+        public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
         public InterfaceInfo(InterfaceDeclarationSyntax source, INameable parent)
         {
-            var interfaceName = source.Identifier.Text;
             Parent = parent;
-
-            var tpl = source.TypeParameterList;
-            var typeString = tpl != null ?
-                $"<{string.Join(", ", tpl.Parameters)}>" : "";
-
-            Name = interfaceName + typeString;
+            Name = source.Identifier.Text + Format(source.TypeParameterList);
+            _baseTypes = Parse(source.BaseList);
         }
 
         public void Populate(InterfaceDeclarationSyntax source)

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Entities
 {
@@ -30,18 +31,15 @@ namespace DotBook.Model.Entities
         private SortedSet<FieldInfo> _fields = new SortedSet<FieldInfo>();
         public IReadOnlyCollection<FieldInfo> Fields => _fields;
 
-        public IReadOnlyCollection<string> BaseTypes => throw new NotImplementedException();
+        private SortedSet<string> _baseTypes = new SortedSet<string>();
+        public IReadOnlyCollection<string> BaseTypes => _baseTypes;
+
 
         public StructInfo(StructDeclarationSyntax source, INameable parent)
         {
-            var structName = source.Identifier.Text;
             Parent = parent;
-
-            var tpl = source.TypeParameterList;
-            var typeString = tpl != null ?
-                $"<{string.Join(", ", tpl.Parameters)}>" : "";
-
-            Name = structName + typeString;
+            Name = source.Identifier.Text + Format(source.TypeParameterList);
+            _baseTypes = Parse(source.BaseList);
         }
 
         public void Populate(StructDeclarationSyntax source)
