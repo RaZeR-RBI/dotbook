@@ -25,9 +25,7 @@ namespace DotBook.Model.Members
             Type = decl.Declaration.Type.ToString();
             _modifiers = decl.Modifiers
                 .ParseModifiers()
-                .WithDefaultVisibility(
-                    Parent is NamespaceInfo ?
-                    Modifier.Internal : Modifier.Private);
+                .WithDefaultVisibility(Modifier.Private);
 
             Parent = parent;
             Value = variable.Initializer?.Value?.ToString();

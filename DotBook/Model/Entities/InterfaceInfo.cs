@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using DotBook.Model.Members;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,9 @@ namespace DotBook.Model.Entities
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
         public INameable Parent { get; }
+
+        private SortedSet<PropertyInfo> _properties = new SortedSet<PropertyInfo>();
+        public IReadOnlyCollection<PropertyInfo> Properties => _properties;
 
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
@@ -33,6 +37,8 @@ namespace DotBook.Model.Entities
                 .WithDefaultVisibility(
                     Parent is NamespaceInfo ?
                     Modifier.Internal : Modifier.Private);
+            foreach(var member in source.Members)
+                this.AddAsChild(member, properties: _properties);
         }
 
         public override bool Equals(object obj) => Equals(obj as InterfaceInfo);

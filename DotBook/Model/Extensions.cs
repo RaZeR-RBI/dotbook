@@ -30,25 +30,32 @@ namespace DotBook.Model
             SortedSet<StructInfo> structs = null,
             SortedSet<InterfaceInfo> interfaces = null,
             SortedSet<EnumInfo> enums = null,
-            SortedSet<FieldInfo> fields = null)
+            SortedSet<FieldInfo> fields = null,
+            SortedSet<PropertyInfo> properties = null)
         {
             // ugly but works
             switch (s)
             {
-                case ClassDeclarationSyntax classDecl:
-                    new ClassInfo(classDecl, parent).AddOrReuse(classDecl, classes);
+                case ClassDeclarationSyntax decl:
+                    new ClassInfo(decl, parent).AddOrReuse(decl, classes);
                     break;
-                case EnumDeclarationSyntax enumDecl:
-                    if (enums != null) enums.Add(new EnumInfo(enumDecl, parent));
+                case EnumDeclarationSyntax decl:
+                    if (enums != null)
+                        enums.Add(new EnumInfo(decl, parent));
                     break;
-                case StructDeclarationSyntax structDecl:
-                    new StructInfo(structDecl, parent).AddOrReuse(structDecl, structs);
+                case StructDeclarationSyntax decl:
+                    new StructInfo(decl, parent).AddOrReuse(decl, structs);
                     break;
-                case InterfaceDeclarationSyntax intDecl:
-                    new InterfaceInfo(intDecl, parent).AddOrReuse(intDecl, interfaces);
+                case InterfaceDeclarationSyntax decl:
+                    new InterfaceInfo(decl, parent).AddOrReuse(decl, interfaces);
                     break;
-                case FieldDeclarationSyntax fieldDecl:
-                    if (fields != null) fields.Add(new FieldInfo(fieldDecl, parent));
+                case FieldDeclarationSyntax decl:
+                    if (fields != null)
+                        fields.Add(new FieldInfo(decl, parent));
+                    break;
+                case PropertyDeclarationSyntax decl:
+                    if (properties != null)
+                        properties.Add(new PropertyInfo(decl, parent));
                     break;
             }
         }

@@ -31,6 +31,9 @@ namespace DotBook.Model.Entities
         private SortedSet<FieldInfo> _fields = new SortedSet<FieldInfo>();
         public IReadOnlyCollection<FieldInfo> Fields => _fields;
 
+        private SortedSet<PropertyInfo> _properties = new SortedSet<PropertyInfo>();
+        public IReadOnlyCollection<PropertyInfo> Properties => _properties;
+
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
@@ -53,7 +56,7 @@ namespace DotBook.Model.Entities
             foreach (var member in source.Members)
                 this.AddAsChild(member,
                     _classes, _structs, _interfaces, _enums,
-                    _fields);
+                    _fields, _properties);
         }
 
         public override bool Equals(object obj) => Equals(obj as StructInfo);

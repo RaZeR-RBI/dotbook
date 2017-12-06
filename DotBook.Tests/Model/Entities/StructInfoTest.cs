@@ -113,7 +113,29 @@ namespace DotBook.Tests.Model.Entities
             Assert.Contains(fields,
                 f => f.Name == "MyTuple" && f.Type == "(byte, long)");
         }
+        
+        [Fact]
+        public void ShouldHandleProperties()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct
+                    {
+                        int IntProp { get; };
+                        string StringProp { get; };
+                    }
+                }
+            ";
 
+            var properties = Act(source).First().Properties;
+
+            Assert.Equal(2, properties.Count);
+            Assert.Contains(properties,
+                f => f.Name == "IntProp" && f.Type == "int");
+            Assert.Contains(properties,
+                f => f.Name == "StringProp" && f.Type == "string");
+        }
 
         [Fact]
         public void ShouldIncludeTypeParameters()
