@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DotBook.Model.Members
 {
-    public class PropertyInfo : INameable, IModifiable, IComparable
+    public class IndexerInfo : INameable, IModifiable, IComparable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -21,9 +21,12 @@ namespace DotBook.Model.Members
         public bool HasGetter => Getter != null;
         public bool HasSetter => Setter != null;
 
-        public PropertyInfo(PropertyDeclarationSyntax decl, INameable parent)
+        public IndexerInfo(IndexerDeclarationSyntax decl, INameable parent)
         {
-            Name = decl.Identifier.Text;
+            var paramList = decl.ParameterList.Parameters
+                .Select(p => p.Type.ToString());
+
+            Name = decl.Type.ToString() + $"[{string.Join(", ", paramList)}]";
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
@@ -43,7 +46,7 @@ namespace DotBook.Model.Members
                 Getter = new AccessorInfo(this);
         }
 
-        public int CompareTo(object obj) =>
-            FullName.CompareTo((obj as PropertyInfo)?.FullName);
+        public int CompareTo(object obj) => 
+            FullName.CompareTo((obj as IndexerInfo)?.FullName);
     }
 }
