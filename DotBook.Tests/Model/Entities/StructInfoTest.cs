@@ -132,9 +132,62 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.Equal(2, properties.Count);
             Assert.Contains(properties,
-                f => f.Name == "IntProp" && f.Type == "int");
+                p => p.Name == "IntProp" && p.Type == "int");
             Assert.Contains(properties,
-                f => f.Name == "StringProp" && f.Type == "string");
+                p => p.Name == "StringProp" && p.Type == "string");
+        }
+
+        [Fact]
+        public void ShouldHandleIndexers()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct
+                    {
+                        int this[int index] { get; };
+                        long this[string key] { get; };
+                    }
+                }
+            ";
+
+            var indexers = Act(source).First().Indexers;
+
+            Assert.Equal(2, indexers.Count);
+            Assert.Contains(indexers,
+                i => i.Name == "int[int]" && i.Type == "int" &&
+                i.HasGetter && !i.HasSetter);
+            Assert.Contains(indexers,
+                i => i.Name == "long[string]" && i.Type == "long" &&
+                i.HasGetter && !i.HasSetter);
+        }
+        
+        [Fact]
+        public void ShouldHandleMethods()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct
+                    {
+                        void DoSomething();
+                        int GetResult(string input);
+                    }
+                }
+            ";
+
+            var methods = Act(source).First().Methods;
+
+            Assert.Equal(2, methods.Count);
+            Assert.Contains(methods,
+                m => m.Name == "DoSomething()" && m.ReturnType == "void" &&
+                m.Signature == "void DoSomething()" &&
+                m.Parameters.Count == 0);
+            Assert.Contains(methods,
+                m => m.Name == "GetResult(string)" && m.ReturnType == "int" &&
+                m.Signature == "int GetResult(string input)" &&
+                m.Parameters.Single().Name == "input" &&
+                m.Parameters.Single().Type == "string");
         }
 
         [Fact]

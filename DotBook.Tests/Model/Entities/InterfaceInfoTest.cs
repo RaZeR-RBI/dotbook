@@ -20,9 +20,9 @@ namespace DotBook.Tests.Model.Entities
             modifier.ToList();
 
         private IReadOnlyCollection<Modifier> Actual(
-            IReadOnlyCollection<InterfaceInfo> Interfaces,
+            IReadOnlyCollection<InterfaceInfo> interfaces,
             string name) =>
-            Interfaces.First(e => e.Name == name).Modifiers;
+            interfaces.First(e => e.Name == name).Modifiers;
 
         [Fact]
         public void ShouldHandleModifiers()
@@ -90,6 +90,82 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(2, info.BaseTypes.Count);
             Assert.Contains("IInterface", info.BaseTypes);
             Assert.Contains("IInterfaceToo<T>", info.BaseTypes);
+        }
+
+        [Fact]
+        public void ShouldHandleProperties()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface
+                    {
+                        int IntProp { get; };
+                        string StringProp { get; };
+                    }
+                }
+            ";
+
+            var properties = Act(source).First().Properties;
+
+            Assert.Equal(2, properties.Count);
+            Assert.Contains(properties,
+                p => p.Name == "IntProp" && p.Type == "int");
+            Assert.Contains(properties,
+                p => p.Name == "StringProp" && p.Type == "string");
+        }
+
+        [Fact]
+        public void ShouldHandleIndexers()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface
+                    {
+                        int this[int index] { get; };
+                        long this[string key] { get; };
+                    }
+                }
+            ";
+
+            var indexers = Act(source).First().Indexers;
+
+            Assert.Equal(2, indexers.Count);
+            Assert.Contains(indexers,
+                i => i.Name == "int[int]" && i.Type == "int" &&
+                i.HasGetter && !i.HasSetter);
+            Assert.Contains(indexers,
+                i => i.Name == "long[string]" && i.Type == "long" &&
+                i.HasGetter && !i.HasSetter);
+        }
+
+        [Fact]
+        public void ShouldHandleMethods()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface
+                    {
+                        void DoSomething();
+                        int GetResult(string input);
+                    }
+                }
+            ";
+
+            var methods = Act(source).First().Methods;
+
+            Assert.Equal(2, methods.Count);
+            Assert.Contains(methods,
+                m => m.Name == "DoSomething()" && m.ReturnType == "void" &&
+                m.Signature == "void DoSomething()" &&
+                m.Parameters.Count == 0);
+            Assert.Contains(methods,
+                m => m.Name == "GetResult(string)" && m.ReturnType == "int" &&
+                m.Signature == "int GetResult(string input)" &&
+                m.Parameters.Single().Name == "input" &&
+                m.Parameters.Single().Type == "string");
         }
     }
 }

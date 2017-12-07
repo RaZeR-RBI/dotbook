@@ -20,9 +20,9 @@ namespace DotBook.Tests.Model.Members
             modifier.ToList();
 
         private IReadOnlyCollection<Modifier> Actual(
-            IReadOnlyCollection<PropertyInfo> structs,
+            IReadOnlyCollection<PropertyInfo> properties,
             string name) =>
-            structs.First(s => s.Name == name).Modifiers;
+            properties.First(s => s.Name == name).Modifiers;
 
         [Fact]
         public void ShouldHandleModifiers()

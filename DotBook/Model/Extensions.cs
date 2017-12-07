@@ -11,7 +11,6 @@ namespace DotBook.Model
 {
     public static class Extensions
     {
-
         public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source,
             IComparer<T> comparer = null) => new SortedSet<T>(source, comparer);
 
@@ -31,32 +30,29 @@ namespace DotBook.Model
             SortedSet<InterfaceInfo> interfaces = null,
             SortedSet<EnumInfo> enums = null,
             SortedSet<FieldInfo> fields = null,
-            SortedSet<PropertyInfo> properties = null)
+            SortedSet<PropertyInfo> properties = null,
+            SortedSet<IndexerInfo> indexers = null,
+            SortedSet<MethodInfo> methods = null)
         {
             // ugly but works
             switch (s)
             {
                 case ClassDeclarationSyntax decl:
-                    new ClassInfo(decl, parent).AddOrReuse(decl, classes);
-                    break;
+                    new ClassInfo(decl, parent).AddOrReuse(decl, classes); break;
                 case EnumDeclarationSyntax decl:
-                    if (enums != null)
-                        enums.Add(new EnumInfo(decl, parent));
-                    break;
+                    enums?.Add(new EnumInfo(decl, parent)); break;
                 case StructDeclarationSyntax decl:
-                    new StructInfo(decl, parent).AddOrReuse(decl, structs);
-                    break;
+                    new StructInfo(decl, parent).AddOrReuse(decl, structs); break;
                 case InterfaceDeclarationSyntax decl:
-                    new InterfaceInfo(decl, parent).AddOrReuse(decl, interfaces);
-                    break;
+                    new InterfaceInfo(decl, parent).AddOrReuse(decl, interfaces); break;
                 case FieldDeclarationSyntax decl:
-                    if (fields != null)
-                        fields.Add(new FieldInfo(decl, parent));
-                    break;
+                    fields?.Add(new FieldInfo(decl, parent)); break;
                 case PropertyDeclarationSyntax decl:
-                    if (properties != null)
-                        properties.Add(new PropertyInfo(decl, parent));
-                    break;
+                    properties?.Add(new PropertyInfo(decl, parent)); break;
+                case IndexerDeclarationSyntax decl:
+                    indexers?.Add(new IndexerInfo(decl, parent)); break;
+                case MethodDeclarationSyntax decl:
+                    methods?.Add(new MethodInfo(decl, parent)); break;
             }
         }
 

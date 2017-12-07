@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using DotBook.Model.Members;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,9 @@ namespace DotBook.Utils
         public static SortedSet<string> Parse(BaseListSyntax syntax) =>
             new SortedSet<string>(syntax?.Types.Select(t => t.ToString()) ??
                 Enumerable.Empty<string>());
+
+        public static List<ParameterInfo> Parse(ParameterListSyntax syntax) =>
+            syntax?.Parameters.Select(p => new ParameterInfo(p)).ToList() ??
+                new List<ParameterInfo>();
     }
 }
