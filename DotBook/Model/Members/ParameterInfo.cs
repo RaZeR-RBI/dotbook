@@ -7,7 +7,6 @@ namespace DotBook.Model.Members
 {
     public class ParameterInfo
     {
-
         public string Name { get; }
         public string Type { get; }
 

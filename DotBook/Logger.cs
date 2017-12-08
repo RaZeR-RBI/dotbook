@@ -7,34 +7,41 @@ namespace DotBook
     public static class Logger
     {
         /// <summary>
-        /// Writes a lime-colored message
+        /// Writes a lime-colored success message
         /// </summary>
         /// <param name="message"></param>
         public static void Success(string message) =>
-            Console.WriteLine(message, Color.Lime);
+            Console.WriteLine($"[GOOD] {message}", Color.Lime);
 
         /// <summary>
-        /// Writes a white-colored message
+        /// Writes a white-colored information message
         /// </summary>
         /// <param name="message"></param>
         public static void Info(string message) =>
-            Console.WriteLine(message, Color.White);
+            Console.WriteLine($"[INFO] {message}", Color.White);
 
         /// <summary>
         /// Writes a message with default color
         /// </summary>
         /// <param name="message"></param>
         public static void Log(string message) =>
-            Console.WriteLine(message);
+            Console.WriteLine($"[INFO] {message}");
 
         /// <summary>
-        /// Writes a red-colored message and exits the application
+        /// Writes a yellow-colored warning message
+        /// </summary>
+        /// <param name="message"></param>
+        public static void Warning(string message) =>
+            Console.WriteLine($"[WARN] {message}", Color.Yellow);
+
+        /// <summary>
+        /// Writes a red-colored error message and exits the application
         /// </summary>
         /// <param name="message"></param>
         /// <param name="errorCode"></param>
         public static void Fatal(string message, int errorCode = -1)
         {
-            Console.WriteLine(message, Color.Red);
+            Console.WriteLine($"[ERROR] {message}", Color.Red);
             Environment.Exit(errorCode);
         }
     }

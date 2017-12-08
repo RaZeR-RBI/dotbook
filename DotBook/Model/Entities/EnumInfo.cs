@@ -2,10 +2,11 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Entities
 {
-    public class EnumInfo : INameable, IModifiable, IComparable
+    public class EnumInfo : INameable, IModifiable, IComparable, IDocumentable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -18,10 +19,14 @@ namespace DotBook.Model.Entities
         private List<Member> _members = new List<Member>();
         public IReadOnlyCollection<Member> Members => _members;
 
+        public string Documentation { get; }
 
         public EnumInfo(EnumDeclarationSyntax decl, INameable parent)
         {
             (Name, Parent) = (decl.Identifier.Text, parent);
+            if (decl.HasLeadingTrivia)
+                Documentation = GetDocumentation(decl.GetLeadingTrivia());
+
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(

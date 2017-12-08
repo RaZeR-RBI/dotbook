@@ -256,5 +256,24 @@ namespace DotBook.Tests.Model.Entities
             Assert.Contains("IInterface", info.BaseTypes);
             Assert.Contains("IInterfaceToo<T>", info.BaseTypes);
         }
+
+        [Fact]
+        public void ShouldIncludeDocumentation()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    /// <summary>
+                    /// Useful struct
+                    /// </summary>
+                    struct MyStruct { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.NotNull(info.Documentation);
+            Assert.Contains("Useful struct", info.Documentation);
+        }
     }
 }

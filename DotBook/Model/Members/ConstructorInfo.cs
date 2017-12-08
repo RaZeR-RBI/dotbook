@@ -14,6 +14,9 @@ namespace DotBook.Model.Members
             var paramTypes = decl.ParameterList.Parameters
                 .Select(p => p.Type.ToString());
 
+            if (decl.HasLeadingTrivia)
+                Documentation = GetDocumentation(decl.GetLeadingTrivia());
+
             Name = $"{decl.Identifier.Text}({string.Join(", ", paramTypes)})";
             Signature = $"{decl.Identifier.Text}{decl.ParameterList}";
 

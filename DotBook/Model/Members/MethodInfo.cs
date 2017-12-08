@@ -22,6 +22,9 @@ namespace DotBook.Model.Members
             Signature = $"{decl.ReturnType} {decl.Identifier.Text}" +
                 $"{typeParams}{decl.ParameterList}";
 
+            if (decl.HasLeadingTrivia)
+                Documentation = GetDocumentation(decl.GetLeadingTrivia());
+
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);

@@ -1,12 +1,13 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using static DotBook.Utils.Common;
+using static DotBook.Logger;
 
 namespace DotBook.Model.Entities
 {
     public class NamespaceInfo : INameable, IPartial<NamespaceDeclarationSyntax>,
-        IComparable
+        IComparable, IDocumentable
     {
         public string Name { get; }
         public string FullName => Name;
@@ -23,12 +24,25 @@ namespace DotBook.Model.Entities
         private SortedSet<InterfaceInfo> _interfaces = new SortedSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
+        public string Documentation { get; private set; }
+
         public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
             Name = declaration.Name.ToString();
 
-        public void Populate(NamespaceDeclarationSyntax root)
+        public void Populate(NamespaceDeclarationSyntax source)
         {
-            foreach (var member in root.Members)
+            if (source.HasLeadingTrivia)
+            {
+                var doc = GetDocumentation(source.GetLeadingTrivia());
+                if (doc != null)
+                {
+                    if (Documentation != null)
+                        Warning("Found several documentation comments for " + FullName);
+                    Documentation = doc;
+                }
+            }
+
+            foreach (var member in source.Members)
                 this.AddAsChild(member, _classes, _structs, _interfaces, _enums);
         }
 

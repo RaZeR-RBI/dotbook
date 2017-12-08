@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using static DotBook.Utils.Common;
+using static DotBook.Logger;
 
 namespace DotBook.Model.Entities
 {
     public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>,
-        IDerivable, IComparable
+        IDerivable, IComparable, IDocumentable
     {
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -29,6 +30,8 @@ namespace DotBook.Model.Entities
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
+        public string Documentation { get; private set; }
+
         public InterfaceInfo(InterfaceDeclarationSyntax source, INameable parent)
         {
             Parent = parent;
@@ -38,6 +41,17 @@ namespace DotBook.Model.Entities
 
         public void Populate(InterfaceDeclarationSyntax source)
         {
+            if (source.HasLeadingTrivia)
+            {
+                var doc = GetDocumentation(source.GetLeadingTrivia());
+                if (doc != null)
+                {
+                    if (Documentation != null)
+                        Warning("Found several documentation comments for " + FullName);
+                    Documentation = doc;
+                }
+            }
+
             _modifiers = source.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(

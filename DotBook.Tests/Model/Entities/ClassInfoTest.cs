@@ -268,5 +268,24 @@ namespace DotBook.Tests.Model.Entities
             Assert.Contains("IInterface", info.BaseTypes);
             Assert.Contains("BaseClass<T>", info.BaseTypes);
         }
+
+        [Fact]
+        public void ShouldIncludeDocumentation()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    /// <summary>
+                    /// Useful class
+                    /// </summary>
+                    class MyClass { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.NotNull(info.Documentation);
+            Assert.Contains("Useful class", info.Documentation);
+        }
     }
 }

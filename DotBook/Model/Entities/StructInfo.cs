@@ -3,11 +3,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using static DotBook.Utils.Common;
+using static DotBook.Logger;
 
 namespace DotBook.Model.Entities
 {
     public class StructInfo : INameable, IModifiable, IPartial<StructDeclarationSyntax>,
-        IComparable, IDerivable
+        IComparable, IDerivable, IDocumentable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -46,6 +47,7 @@ namespace DotBook.Model.Entities
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
+        public string Documentation { get; private set; }
 
         public StructInfo(StructDeclarationSyntax source, INameable parent)
         {
@@ -56,6 +58,17 @@ namespace DotBook.Model.Entities
 
         public void Populate(StructDeclarationSyntax source)
         {
+            if (source.HasLeadingTrivia)
+            {
+                var doc = GetDocumentation(source.GetLeadingTrivia());
+                if (doc != null)
+                {
+                    if (Documentation != null)
+                        Warning("Found several documentation comments for " + FullName);
+                    Documentation = doc;
+                }
+            }
+
             _modifiers = source.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(

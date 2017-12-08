@@ -3,10 +3,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class IndexerInfo : INameable, IModifiable, IComparable
+    public class IndexerInfo : INameable, IModifiable, IComparable, IDocumentable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -21,10 +22,15 @@ namespace DotBook.Model.Members
         public bool HasGetter => Getter != null;
         public bool HasSetter => Setter != null;
 
+        public string Documentation { get; }
+
         public IndexerInfo(IndexerDeclarationSyntax decl, INameable parent)
         {
             var paramList = decl.ParameterList.Parameters
                 .Select(p => p.Type.ToString());
+
+            if (decl.HasLeadingTrivia)
+                Documentation = GetDocumentation(decl.GetLeadingTrivia());
 
             Name = decl.Type.ToString() + $"[{string.Join(", ", paramList)}]";
             _modifiers = decl.Modifiers

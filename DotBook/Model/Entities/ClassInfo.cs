@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static DotBook.Utils.Common;
+using static DotBook.Logger;
 
 namespace DotBook.Model.Entities
 {
     public class ClassInfo : INameable, IModifiable, IPartial<ClassDeclarationSyntax>,
-        IDerivable, IComparable
+        IDerivable, IComparable, IDocumentable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -48,6 +49,7 @@ namespace DotBook.Model.Entities
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
+        public string Documentation { get; private set; }
 
         public ClassInfo(ClassDeclarationSyntax source, INameable parent)
         {
@@ -58,6 +60,17 @@ namespace DotBook.Model.Entities
 
         public void Populate(ClassDeclarationSyntax source)
         {
+            if (source.HasLeadingTrivia)
+            {
+                var doc = GetDocumentation(source.GetLeadingTrivia());
+                if (doc != null)
+                {
+                    if (Documentation != null)
+                        Warning("Found several documentation comments for " + FullName);
+                    Documentation = doc;
+                }
+            }
+
             _modifiers = source.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(

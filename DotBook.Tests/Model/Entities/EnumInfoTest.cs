@@ -99,5 +99,25 @@ namespace DotBook.Tests.Model.Entities
             Assert.Contains(members, m => m.Key == "Four" && m.Value == "4");
             Assert.Contains(members, m => m.Key == "FourToo" && m.Value == "Four");
         }
+
+
+        [Fact]
+        public void ShouldIncludeDocumentation()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    /// <summary>
+                    /// Useful enum
+                    /// </summary>
+                    enum MyEnum { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.NotNull(info.Documentation);
+            Assert.Contains("Useful enum", info.Documentation);
+        }
     }
 }

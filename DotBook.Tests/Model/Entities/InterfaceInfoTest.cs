@@ -167,5 +167,25 @@ namespace DotBook.Tests.Model.Entities
                 m.Parameters.Single().Name == "input" &&
                 m.Parameters.Single().Type == "string");
         }
+
+
+        [Fact]
+        public void ShouldIncludeDocumentation()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    /// <summary>
+                    /// Useful interface
+                    /// </summary>
+                    interface MyInterface { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.NotNull(info.Documentation);
+            Assert.Contains("Useful interface", info.Documentation);
+        }
     }
 }
