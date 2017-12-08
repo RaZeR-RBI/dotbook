@@ -170,8 +170,8 @@ namespace DotBook.Tests.Model.Entities
                 {
                     struct MyStruct
                     {
-                        void DoSomething();
-                        int GetResult(string input);
+                        void DoSomething() { }
+                        int GetResult(string input) { return 0; }
                     }
                 }
             ";
@@ -188,6 +188,34 @@ namespace DotBook.Tests.Model.Entities
                 m.Signature == "int GetResult(string input)" &&
                 m.Parameters.Single().Name == "input" &&
                 m.Parameters.Single().Type == "string");
+        }
+
+        [Fact]
+        public void ShouldHandleConstructors()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct
+                    {
+                        MyStruct() { }
+                        MyStruct(string input) { }
+                    }
+                }
+            ";
+
+            var constructors = Act(source).First().Constructors;
+
+            Assert.Equal(2, constructors.Count);
+            Assert.Contains(constructors,
+                c => c.Name == "MyStruct()" && c.ReturnType == "void" &&
+                c.Signature == "MyStruct()" &&
+                c.Parameters.Count == 0);
+            Assert.Contains(constructors,
+                c => c.Name == "MyStruct(string)" && c.ReturnType == "void" &&
+                c.Signature == "MyStruct(string input)" &&
+                c.Parameters.Single().Name == "input" &&
+                c.Parameters.Single().Type == "string");
         }
 
         [Fact]

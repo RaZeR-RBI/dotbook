@@ -32,7 +32,8 @@ namespace DotBook.Model
             SortedSet<FieldInfo> fields = null,
             SortedSet<PropertyInfo> properties = null,
             SortedSet<IndexerInfo> indexers = null,
-            SortedSet<MethodInfo> methods = null)
+            SortedSet<MethodInfo> methods = null,
+            SortedSet<ConstructorInfo> constructors = null)
         {
             // ugly but works
             switch (s)
@@ -53,6 +54,8 @@ namespace DotBook.Model
                     indexers?.Add(new IndexerInfo(decl, parent)); break;
                 case MethodDeclarationSyntax decl:
                     methods?.Add(new MethodInfo(decl, parent)); break;
+                case ConstructorDeclarationSyntax decl:
+                    constructors?.Add(new ConstructorInfo(decl, parent)); break;
             }
         }
 

@@ -8,21 +8,8 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class MethodInfo : INameable, IModifiable, IComparable
+    public class MethodInfo : MethodInfoBase
     {
-        public string Name { get; }
-        public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
-
-        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
-        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
-
-        private List<ParameterInfo> _parameters;
-        public IReadOnlyCollection<ParameterInfo> Parameters => _parameters;
-
-        public string Signature { get; }
-        public string ReturnType { get; }
-
         public MethodInfo(MethodDeclarationSyntax decl, INameable parent)
         {
             var paramTypes = decl.ParameterList.Parameters
@@ -43,8 +30,5 @@ namespace DotBook.Model.Members
             ReturnType = decl.ReturnType.ToString();
             Parent = parent;
         }
-
-        public int CompareTo(object obj) =>
-            FullName.CompareTo((obj as MethodInfo)?.FullName);
     }
 }
