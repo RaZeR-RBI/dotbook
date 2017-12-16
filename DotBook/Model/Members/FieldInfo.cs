@@ -7,11 +7,11 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class FieldInfo : INameable, IModifiable, IComparable, IDocumentable
+    public class FieldInfo : IMember
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
+        public IMemberContainer Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -21,7 +21,7 @@ namespace DotBook.Model.Members
 
         public string Documentation { get; }
 
-        public FieldInfo(FieldDeclarationSyntax decl, INameable parent)
+        public FieldInfo(FieldDeclarationSyntax decl, IMemberContainer parent)
         {
             var variable = decl.Declaration.Variables.First();
             if (decl.HasLeadingTrivia)

@@ -91,7 +91,7 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var members = Act(source).First().Members;
+            var members = Act(source).First().Values;
 
             Assert.Equal(4, members.Count);
             Assert.Contains(members, m => m.Key == "One" && m.Value == "1");

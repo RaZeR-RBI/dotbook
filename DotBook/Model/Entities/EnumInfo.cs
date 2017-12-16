@@ -6,22 +6,24 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Entities
 {
-    public class EnumInfo : INameable, IModifiable, IComparable, IDocumentable
+    public class EnumInfo : IMemberContainer
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         public string UnderlyingType { get; }
-        private List<Member> _members = new List<Member>();
-        public IReadOnlyCollection<Member> Members => _members;
+        private List<EnumValue> _values = new List<EnumValue>();
+        public IReadOnlyCollection<EnumValue> Values => _values;
 
         public string Documentation { get; }
 
-        public EnumInfo(EnumDeclarationSyntax decl, INameable parent)
+        public IReadOnlyCollection<IMember> Members => null;
+        public ITypeContainer Parent { get; }
+
+        public EnumInfo(EnumDeclarationSyntax decl, ITypeContainer parent)
         {
             (Name, Parent) = (decl.Identifier.Text, parent);
             if (decl.HasLeadingTrivia)
@@ -38,7 +40,7 @@ namespace DotBook.Model.Entities
             UnderlyingType = typeDecl;
 
             foreach (EnumMemberDeclarationSyntax member in decl.Members)
-                _members.Add(new Member(member));
+                _values.Add(new EnumValue(member));
         }
 
         public override bool Equals(object obj) =>
@@ -53,12 +55,12 @@ namespace DotBook.Model.Entities
         public int CompareTo(object obj) =>
             FullName.CompareTo((obj as EnumInfo)?.FullName);
 
-        public class Member
+        public class EnumValue
         {
             public string Key { get; }
             public string Value { get; }
 
-            public Member(EnumMemberDeclarationSyntax decl)
+            public EnumValue(EnumMemberDeclarationSyntax decl)
             {
                 Key = decl.Identifier.Text;
                 Value = decl.EqualsValue?.Value?.ToString() ?? "";

@@ -3,6 +3,7 @@ using DotBook.Model.Members;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,17 +24,20 @@ namespace DotBook.Model
             savedInfo.Populate(decl);
         }
 
-        public static void AddAsChild(this INameable parent, 
+        public static List<T> CastJoin<T>(params IEnumerable[] sources)
+        {
+            var result = new List<T>();
+            foreach (var source in sources)
+                result.AddRange(source.Cast<T>());
+            return result;
+        }
+
+        public static void AddChildTypes(this ITypeContainer parent, 
             MemberDeclarationSyntax s,
             SortedSet<ClassInfo> classes = null,
             SortedSet<StructInfo> structs = null,
             SortedSet<InterfaceInfo> interfaces = null,
-            SortedSet<EnumInfo> enums = null,
-            SortedSet<FieldInfo> fields = null,
-            SortedSet<PropertyInfo> properties = null,
-            SortedSet<IndexerInfo> indexers = null,
-            SortedSet<MethodInfo> methods = null,
-            SortedSet<ConstructorInfo> constructors = null)
+            SortedSet<EnumInfo> enums = null)
         {
             // ugly but works
             switch (s)
@@ -46,6 +50,21 @@ namespace DotBook.Model
                     new StructInfo(decl, parent).AddOrReuse(decl, structs); break;
                 case InterfaceDeclarationSyntax decl:
                     new InterfaceInfo(decl, parent).AddOrReuse(decl, interfaces); break;
+            }
+        }
+
+        public static void AddMembers(this IMemberContainer parent,
+            MemberDeclarationSyntax s,
+            SortedSet<FieldInfo> fields = null,
+            SortedSet<PropertyInfo> properties = null,
+            SortedSet<IndexerInfo> indexers = null,
+            SortedSet<MethodInfo> methods = null,
+            SortedSet<ConstructorInfo> constructors = null)
+        {
+
+            // ugly but works
+            switch (s)
+            {
                 case FieldDeclarationSyntax decl:
                     fields?.Add(new FieldInfo(decl, parent)); break;
                 case PropertyDeclarationSyntax decl:

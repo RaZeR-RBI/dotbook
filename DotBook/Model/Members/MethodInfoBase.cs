@@ -4,12 +4,11 @@ using System.Text;
 
 namespace DotBook.Model.Members
 {
-    public abstract class MethodInfoBase : INameable, IModifiable, IComparable,
-        IDocumentable
+    public abstract class MethodInfoBase : IMember
     {
         public string Name { get; protected set; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; protected set; }
+        public IMemberContainer Parent { get; protected set; }
 
         protected SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;

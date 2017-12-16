@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static DotBook.Utils.Common;
+using static DotBook.Model.Extensions;
 using static DotBook.Logger;
 
 namespace DotBook.Model.Entities
 {
-    public class ClassInfo : INameable, IModifiable, IPartial<ClassDeclarationSyntax>,
-        IDerivable, IComparable, IDocumentable
+    public class ClassInfo : IMemberContainer, ITypeContainer, 
+        IPartial<ClassDeclarationSyntax>, IDerivable
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -51,7 +51,15 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; private set; }
 
-        public ClassInfo(ClassDeclarationSyntax source, INameable parent)
+        public IReadOnlyCollection<IMemberContainer> Types =>
+            CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);
+
+        public IReadOnlyCollection<IMember> Members =>
+            CastJoin<IMember>(_fields, _properties, _indexers, _methods, _constructors);
+
+        public ITypeContainer Parent { get; }
+
+        public ClassInfo(ClassDeclarationSyntax source, ITypeContainer parent)
         {
             Parent = parent;
             Name = source.Identifier.Text + Format(source.TypeParameterList);
@@ -78,8 +86,11 @@ namespace DotBook.Model.Entities
                     Modifier.Internal : Modifier.Private);
 
             foreach (var member in source.Members)
-                this.AddAsChild(member, _classes, _structs, _interfaces, _enums,
+            {
+                this.AddChildTypes(member, _classes, _structs, _interfaces, _enums);
+                this.AddMembers(member, 
                     _fields, _properties, _indexers, _methods, _constructors);
+            }  
         }
 
         public override bool Equals(object obj) => Equals(obj as ClassInfo);

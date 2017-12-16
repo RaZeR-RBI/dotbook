@@ -10,7 +10,7 @@ namespace DotBook.Model.Members
 {
     public class MethodInfo : MethodInfoBase
     {
-        public MethodInfo(MethodDeclarationSyntax decl, INameable parent)
+        public MethodInfo(MethodDeclarationSyntax decl, IMemberContainer parent)
         {
             var paramTypes = decl.ParameterList.Parameters
                 .Select(p => p.Type.ToString());

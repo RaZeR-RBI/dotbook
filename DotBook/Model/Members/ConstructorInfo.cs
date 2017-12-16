@@ -9,7 +9,8 @@ namespace DotBook.Model.Members
 {
     public class ConstructorInfo : MethodInfoBase
     {
-        public ConstructorInfo(ConstructorDeclarationSyntax decl, INameable parent)
+        public ConstructorInfo(ConstructorDeclarationSyntax decl, 
+            IMemberContainer parent)
         {
             var paramTypes = decl.ParameterList.Parameters
                 .Select(p => p.Type.ToString());

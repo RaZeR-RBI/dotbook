@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using static DotBook.Utils.Common;
+using static DotBook.Model.Extensions;
 using static DotBook.Logger;
+using System.Linq;
 
 namespace DotBook.Model.Entities
 {
-    public class NamespaceInfo : INameable, IPartial<NamespaceDeclarationSyntax>,
-        IComparable, IDocumentable
+    public class NamespaceInfo : ITypeContainer, IPartial<NamespaceDeclarationSyntax>
     {
         public string Name { get; }
         public string FullName => Name;
@@ -26,6 +27,11 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; private set; }
 
+        public IReadOnlyCollection<IMemberContainer> Types
+        {
+            get => CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);
+        }
+
         public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
             Name = declaration.Name.ToString();
 
@@ -43,7 +49,7 @@ namespace DotBook.Model.Entities
             }
 
             foreach (var member in source.Members)
-                this.AddAsChild(member, _classes, _structs, _interfaces, _enums);
+                this.AddChildTypes(member, _classes, _structs, _interfaces, _enums);
         }
 
         public override bool Equals(object obj) => Equals(obj as NamespaceInfo);

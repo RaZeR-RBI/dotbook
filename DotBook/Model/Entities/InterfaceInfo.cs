@@ -5,18 +5,19 @@ using System.Collections.Generic;
 using System.Text;
 using static DotBook.Utils.Common;
 using static DotBook.Logger;
+using static DotBook.Model.Extensions;
 
 namespace DotBook.Model.Entities
 {
-    public class InterfaceInfo : INameable, IModifiable, IPartial<InterfaceDeclarationSyntax>,
-        IDerivable, IComparable, IDocumentable
+    public class InterfaceInfo : IMemberContainer, IPartial<InterfaceDeclarationSyntax>,
+        IDerivable
     {
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
+        public ITypeContainer Parent { get; }
 
         private SortedSet<PropertyInfo> _properties = new SortedSet<PropertyInfo>();
         public IReadOnlyCollection<PropertyInfo> Properties => _properties;
@@ -32,7 +33,10 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; private set; }
 
-        public InterfaceInfo(InterfaceDeclarationSyntax source, INameable parent)
+        public IReadOnlyCollection<IMember> Members =>
+            CastJoin<IMember>(_properties, _indexers, _methods);
+
+        public InterfaceInfo(InterfaceDeclarationSyntax source, ITypeContainer parent)
         {
             Parent = parent;
             Name = source.Identifier.Text + Format(source.TypeParameterList);
@@ -58,10 +62,12 @@ namespace DotBook.Model.Entities
                     Parent is NamespaceInfo ?
                     Modifier.Internal : Modifier.Private);
             foreach(var member in source.Members)
-                this.AddAsChild(member, 
-                    properties: _properties, 
+            {
+                this.AddMembers(member, 
+                    properties: _properties,
                     indexers: _indexers,
                     methods: _methods);
+            }  
         }
 
         public override bool Equals(object obj) => Equals(obj as InterfaceInfo);
