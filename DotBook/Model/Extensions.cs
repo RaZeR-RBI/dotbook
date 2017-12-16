@@ -58,8 +58,7 @@ namespace DotBook.Model
             SortedSet<FieldInfo> fields = null,
             SortedSet<PropertyInfo> properties = null,
             SortedSet<IndexerInfo> indexers = null,
-            SortedSet<MethodInfo> methods = null,
-            SortedSet<ConstructorInfo> constructors = null)
+            SortedSet<MethodInfoBase> methods = null)
         {
 
             // ugly but works
@@ -74,7 +73,9 @@ namespace DotBook.Model
                 case MethodDeclarationSyntax decl:
                     methods?.Add(new MethodInfo(decl, parent)); break;
                 case ConstructorDeclarationSyntax decl:
-                    constructors?.Add(new ConstructorInfo(decl, parent)); break;
+                    methods?.Add(new ConstructorInfo(decl, parent)); break;
+                case OperatorDeclarationSyntax decl:
+                    methods?.Add(new OperatorInfo(decl, parent)); break;
             }
         }
 

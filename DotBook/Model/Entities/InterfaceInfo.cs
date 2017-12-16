@@ -6,6 +6,7 @@ using System.Text;
 using static DotBook.Utils.Common;
 using static DotBook.Logger;
 using static DotBook.Model.Extensions;
+using System.Linq;
 
 namespace DotBook.Model.Entities
 {
@@ -25,8 +26,9 @@ namespace DotBook.Model.Entities
         private SortedSet<IndexerInfo> _indexers = new SortedSet<IndexerInfo>();
         public IReadOnlyCollection<IndexerInfo> Indexers => _indexers;
 
-        private SortedSet<MethodInfo> _methods = new SortedSet<MethodInfo>();
-        public IReadOnlyCollection<MethodInfo> Methods => _methods;
+        private SortedSet<MethodInfoBase> _methods = new SortedSet<MethodInfoBase>();
+        public IReadOnlyCollection<MethodInfo> Methods =>
+            _methods.OfType<MethodInfo>().ToList();
 
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;

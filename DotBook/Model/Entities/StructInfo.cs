@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using static DotBook.Utils.Common;
 using static DotBook.Logger;
 using static DotBook.Model.Extensions;
+using System.Linq;
 
 namespace DotBook.Model.Entities
 {
@@ -39,11 +40,13 @@ namespace DotBook.Model.Entities
         private SortedSet<IndexerInfo> _indexers = new SortedSet<IndexerInfo>();
         public IReadOnlyCollection<IndexerInfo> Indexers => _indexers;
 
-        private SortedSet<MethodInfo> _methods = new SortedSet<MethodInfo>();
-        public IReadOnlyCollection<MethodInfo> Methods => _methods;
-
-        private SortedSet<ConstructorInfo> _constructors = new SortedSet<ConstructorInfo>();
-        public IReadOnlyCollection<ConstructorInfo> Constructors => _constructors;
+        private SortedSet<MethodInfoBase> _methods = new SortedSet<MethodInfoBase>();
+        public IReadOnlyCollection<MethodInfo> Methods =>
+            _methods.OfType<MethodInfo>().ToList();
+        public IReadOnlyCollection<ConstructorInfo> Constructors =>
+            _methods.OfType<ConstructorInfo>().ToList();
+        public IReadOnlyCollection<OperatorInfo> Operators =>
+            _methods.OfType<OperatorInfo>().ToList();
 
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
@@ -54,7 +57,7 @@ namespace DotBook.Model.Entities
             CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);
 
         public IReadOnlyCollection<IMember> Members =>
-            CastJoin<IMember>(_fields, _properties, _indexers, _methods, _constructors);
+            CastJoin<IMember>(_fields, _properties, _indexers, _methods);
 
         public StructInfo(StructDeclarationSyntax source, ITypeContainer parent)
         {
@@ -85,8 +88,7 @@ namespace DotBook.Model.Entities
             foreach (var member in source.Members)
             {
                 this.AddChildTypes(member, _classes, _structs, _interfaces, _enums);
-                this.AddMembers(member,
-                    _fields, _properties, _indexers, _methods, _constructors);
+                this.AddMembers(member, _fields, _properties, _indexers, _methods);
             }
         }
 

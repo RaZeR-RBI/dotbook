@@ -219,6 +219,24 @@ namespace DotBook.Tests.Model.Entities
         }
 
         [Fact]
+        public void ShouldHandleOperators()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    struct MyStruct
+                    {
+                        public static int operator +(byte one, byte two) { }
+                    }
+                }
+            ";
+
+            var actual = Act(source).First().Operators.First();
+
+            Assert.Equal("int operator +(byte one, byte two)", actual.Signature);
+        }
+
+        [Fact]
         public void ShouldIncludeTypeParameters()
         {
             var source = @"
