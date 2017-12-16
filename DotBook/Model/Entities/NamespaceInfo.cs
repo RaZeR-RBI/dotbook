@@ -5,10 +5,12 @@ using static DotBook.Utils.Common;
 using static DotBook.Model.Extensions;
 using static DotBook.Logger;
 using System.Linq;
+using DotBook.Processing;
 
 namespace DotBook.Model.Entities
 {
-    public class NamespaceInfo : ITypeContainer, IPartial<NamespaceDeclarationSyntax>
+    public class NamespaceInfo : ITypeContainer, IPartial<NamespaceDeclarationSyntax>,
+        INode<INameable>
     {
         public string Name { get; }
         public string FullName => Name;
@@ -27,13 +29,17 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; private set; }
 
-        public IReadOnlyCollection<IMemberContainer> Types
-        {
-            get => CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);
-        }
+        public IReadOnlyCollection<IMemberContainer> Types => 
+            CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);
 
-        public NamespaceInfo(NamespaceDeclarationSyntax declaration) =>
-            Name = declaration.Name.ToString();
+        public INode<INameable> ParentNode { get; }
+
+        public IEnumerable<INode<INameable>> ChildrenNodes =>
+            CastJoin<INode<INameable>>(_classes, _structs, _enums, _interfaces);
+
+        public NamespaceInfo(NamespaceDeclarationSyntax declaration,
+            SourceInfo parent) =>
+            (Name, ParentNode) = (declaration.Name.ToString(), parent);
 
         public void Populate(NamespaceDeclarationSyntax source)
         {

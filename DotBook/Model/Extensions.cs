@@ -1,5 +1,6 @@
 ﻿using DotBook.Model.Entities;
 using DotBook.Model.Members;
+using DotBook.Processing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -31,6 +32,9 @@ namespace DotBook.Model
                 result.AddRange(source.Cast<T>());
             return result;
         }
+
+        public static bool IsRoot<T>(this INode<T> node) =>
+            node.ParentNode == null;
 
         public static void AddChildTypes(this ITypeContainer parent, 
             MemberDeclarationSyntax s,

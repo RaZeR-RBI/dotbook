@@ -5,13 +5,18 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using DotBook.Model.Entities;
+using DotBook.Processing;
 
 namespace DotBook.Model
 {
-    public class SourceInfo
+    public class SourceInfo : INode<INameable>
     {
         private SortedSet<NamespaceInfo> _namespaces = new SortedSet<NamespaceInfo>();
         public IReadOnlyCollection<NamespaceInfo> Namespaces => _namespaces;
+
+        public INode<INameable> ParentNode => null;
+        public IEnumerable<INode<INameable>> ChildrenNodes =>
+            _namespaces.OfType<INode<INameable>>();
 
         public SourceInfo(List<CompilationUnitSyntax> roots) =>
             roots.ForEach(Process);
