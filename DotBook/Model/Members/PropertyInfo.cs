@@ -1,4 +1,5 @@
 ﻿using DotBook.Model.Entities;
+using DotBook.Processing;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,10 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class PropertyInfo : INameable, IModifiable, IComparable, IDocumentable
+    public class PropertyInfo : IMember
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -24,7 +24,13 @@ namespace DotBook.Model.Members
 
         public string Documentation { get; }
 
-        public PropertyInfo(PropertyDeclarationSyntax decl, INameable parent)
+        public IMemberContainer Parent { get; }
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes => null;
+
+        public PropertyInfo(PropertyDeclarationSyntax decl, IMemberContainer parent)
         {
             Name = decl.Identifier.Text;
             if (decl.HasLeadingTrivia)

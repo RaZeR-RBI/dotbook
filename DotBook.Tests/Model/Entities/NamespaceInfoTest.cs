@@ -24,8 +24,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var classes = Act(source).Classes;
+            var ns = Act(source);
+            var classes = ns.Classes;
 
+            Assert.Single(ns.ChildrenNodes);
             Assert.Single(classes);
             Assert.Contains(classes, c => c.FullName == "MyAssembly.PreciousClass");
         }
@@ -48,8 +50,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var classes = Act(source1, source2).Classes;
-
+            var ns = Act(source1, source2);
+            var classes = ns.Classes;
+            
+            Assert.Equal(2, ns.ChildrenNodes.Count());
             Assert.Equal(2, classes.Count);
             Assert.Contains(classes, c => c.FullName == "MyAssembly.PreciousClass");
             Assert.Contains(classes, c => c.FullName == "MyAssembly.OtherPreciousClass");
@@ -65,8 +69,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var structs = Act(source).Structs;
+            var ns = Act(source);
+            var structs = ns.Structs;
 
+            Assert.Single(ns.ChildrenNodes);
             Assert.Single(structs);
             Assert.Contains(structs, s => s.FullName == "MyAssembly.PreciousStruct");
         }
@@ -89,8 +95,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var structs = Act(source1, source2).Structs;
+            var ns = Act(source1, source2);
+            var structs = ns.Structs;
 
+            Assert.Equal(2, ns.ChildrenNodes.Count());
             Assert.Equal(2, structs.Count);
             Assert.Contains(structs, s => s.FullName == "MyAssembly.PreciousStruct");
             Assert.Contains(structs, s => s.FullName == "MyAssembly.OtherPreciousStruct");
@@ -106,8 +114,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var interfaces = Act(source).Interfaces;
+            var ns = Act(source);
+            var interfaces = ns.Interfaces;
 
+            Assert.Single(ns.ChildrenNodes);
             Assert.Single(interfaces);
             Assert.Contains(interfaces, i => i.FullName == "MyAssembly.IPrecious");
         }
@@ -130,8 +140,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var interfaces = Act(source1, source2).Interfaces;
+            var ns = Act(source1, source2);
+            var interfaces = ns.Interfaces;
 
+            Assert.Equal(2, ns.ChildrenNodes.Count());
             Assert.Equal(2, interfaces.Count);
             Assert.Contains(interfaces, i => i.FullName == "MyAssembly.IPrecious");
             Assert.Contains(interfaces, i => i.FullName == "MyAssembly.IOtherPrecious");
@@ -148,11 +160,24 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var enums = Act(source).Enums;
+            var ns = Act(source);
+            var enums = ns.Enums;
 
+            Assert.Equal(2, ns.ChildrenNodes.Count());
             Assert.Equal(2, enums.Count);
             Assert.Contains(enums, e => e.FullName == "MyAssembly.PreciousEnum");
             Assert.Contains(enums, e => e.FullName == "MyAssembly.OtherEnum");
+        }
+
+        [Fact]
+        public void ShouldHaveSourceInfoAsParent()
+        {
+            var source = @"namespace MyAssembly { }";
+
+            var ns = Act(source);
+
+            Assert.False(ns.IsRoot());
+            Assert.IsType<SourceInfo>(ns.ParentNode);
         }
     }
 }

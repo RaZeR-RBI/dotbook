@@ -1,8 +1,11 @@
-﻿using DotBook.Utils;
+﻿using DotBook.Processing;
+using DotBook.Utils;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static DotBook.Utils.Common;
+using static DotBook.Model.Extensions;
 
 namespace DotBook.Model.Entities
 {
@@ -20,8 +23,14 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; }
 
-        public IReadOnlyCollection<IMember> Members => null;
+        public IReadOnlyCollection<IMember> Members => CastJoin<IMember>(_values);
         public ITypeContainer Parent { get; }
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes =>
+            CastJoin<INode<INameable>>(_values);
+
 
         public EnumInfo(EnumDeclarationSyntax decl, ITypeContainer parent)
         {
@@ -40,7 +49,7 @@ namespace DotBook.Model.Entities
             UnderlyingType = typeDecl;
 
             foreach (EnumMemberDeclarationSyntax member in decl.Members)
-                _values.Add(new EnumValue(member));
+                _values.Add(new EnumValue(member, this));
         }
 
         public override bool Equals(object obj) =>
@@ -55,16 +64,37 @@ namespace DotBook.Model.Entities
         public int CompareTo(object obj) =>
             FullName.CompareTo((obj as EnumInfo)?.FullName);
 
-        public class EnumValue
+        public class EnumValue : IMember
         {
             public string Key { get; }
             public string Value { get; }
 
-            public EnumValue(EnumMemberDeclarationSyntax decl)
+            public IMemberContainer Parent { get; }
+
+            public string Name => Key;
+
+            public string FullName { get => $"{Parent.FullName}.{Name}"; }
+
+            private static IReadOnlyCollection<Modifier> _visibility =
+                new List<Modifier>() { Modifier.Public };
+            public IReadOnlyCollection<Modifier> Modifiers => _visibility;
+
+            public string Documentation { get; }
+
+            public INode<INameable> ParentNode => Parent;
+
+            public IEnumerable<INode<INameable>> ChildrenNodes => null;
+
+            public EnumValue(EnumMemberDeclarationSyntax decl, EnumInfo parent)
             {
                 Key = decl.Identifier.Text;
                 Value = decl.EqualsValue?.Value?.ToString() ?? "";
+                if (decl.HasLeadingTrivia)
+                    Documentation = GetDocumentation(decl.GetLeadingTrivia());
             }
+
+            public int CompareTo(object obj) =>
+                FullName.CompareTo((obj as EnumValue)?.FullName);
         }
     }
 }

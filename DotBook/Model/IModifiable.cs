@@ -47,7 +47,6 @@ namespace DotBook.Model
         public static IReadOnlyCollection<Modifier> Visibility => _visibility;
 
 
-
         public static Modifier AsModifierEnum(this SyntaxToken token) =>
             Enum.Parse<Modifier>(token.Text.FirstCharToUpper());
 

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DotBook.Processing;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DotBook.Model.Members
 {
-    public abstract class MethodInfoBase : IMember
+    public abstract class MethodInfoBase : IMember, INode<INameable>
     {
         public string Name { get; protected set; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
@@ -20,6 +21,10 @@ namespace DotBook.Model.Members
         public string ReturnType { get; protected set; }
 
         public string Documentation { get; protected set; }
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
         public int CompareTo(object obj) =>
             FullName.CompareTo((obj as MethodInfo)?.FullName);

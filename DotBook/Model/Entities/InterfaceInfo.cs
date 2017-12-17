@@ -7,6 +7,7 @@ using static DotBook.Utils.Common;
 using static DotBook.Logger;
 using static DotBook.Model.Extensions;
 using System.Linq;
+using DotBook.Processing;
 
 namespace DotBook.Model.Entities
 {
@@ -37,6 +38,11 @@ namespace DotBook.Model.Entities
 
         public IReadOnlyCollection<IMember> Members =>
             CastJoin<IMember>(_properties, _indexers, _methods);
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes =>
+            CastJoin<INode<INameable>>(_properties, _indexers, _methods);
 
         public InterfaceInfo(InterfaceDeclarationSyntax source, ITypeContainer parent)
         {

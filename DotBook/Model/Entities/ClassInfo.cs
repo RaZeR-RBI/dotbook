@@ -7,6 +7,7 @@ using System.Text;
 using static DotBook.Utils.Common;
 using static DotBook.Model.Extensions;
 using static DotBook.Logger;
+using DotBook.Processing;
 
 namespace DotBook.Model.Entities
 {
@@ -60,6 +61,12 @@ namespace DotBook.Model.Entities
             CastJoin<IMember>(_fields, _properties, _indexers, _methods);
 
         public ITypeContainer Parent { get; }
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes =>
+            CastJoin<INode<INameable>>(_classes, _structs, _enums, _interfaces,
+                _fields, _properties, _indexers, _methods);
 
         public ClassInfo(ClassDeclarationSyntax source, ITypeContainer parent)
         {

@@ -1,4 +1,5 @@
 ﻿using DotBook.Model.Entities;
+using DotBook.Processing;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,11 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class IndexerInfo : INameable, IModifiable, IComparable, IDocumentable
+    public class IndexerInfo : IMember
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public INameable Parent { get; }
+        public IMemberContainer Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
@@ -24,7 +25,12 @@ namespace DotBook.Model.Members
 
         public string Documentation { get; }
 
-        public IndexerInfo(IndexerDeclarationSyntax decl, INameable parent)
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes => null;
+
+
+        public IndexerInfo(IndexerDeclarationSyntax decl, IMemberContainer parent)
         {
             var paramList = decl.ParameterList.Parameters
                 .Select(p => p.Type.ToString());

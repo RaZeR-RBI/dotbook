@@ -25,7 +25,7 @@ namespace DotBook.Model
         {
             if (!root.Members.Any()) return;
             var node = root.Members.First() as NamespaceDeclarationSyntax;
-            new NamespaceInfo(node).AddOrReuse(node, _namespaces);
+            new NamespaceInfo(node, this).AddOrReuse(node, _namespaces);
         }
 
         public override string ToString() =>

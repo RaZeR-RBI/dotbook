@@ -1,4 +1,5 @@
 ﻿using DotBook.Model.Entities;
+using DotBook.Processing;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,10 @@ namespace DotBook.Model.Members
         public string Value { get; }
 
         public string Documentation { get; }
+
+        public INode<INameable> ParentNode => Parent;
+
+        public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
         public FieldInfo(FieldDeclarationSyntax decl, IMemberContainer parent)
         {

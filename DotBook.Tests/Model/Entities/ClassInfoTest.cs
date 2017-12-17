@@ -86,6 +86,7 @@ namespace DotBook.Tests.Model.Entities
 
             var info = Act(source).First();
 
+            Assert.Equal(4, info.ChildrenNodes.Count());
             Assert.Single(info.Classes);
             Assert.Contains(info.Classes,
                 c => c.FullName == "MyAssembly.OuterClass.InnerClass");
@@ -115,8 +116,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var fields = Act(source).First().Fields;
+            var ci = Act(source).First();
+            var fields = ci.Fields;
 
+            Assert.Equal(3, ci.ChildrenNodes.Count());
             Assert.Equal(3, fields.Count);
             Assert.Contains(fields,
                 f => f.Name == "IntField" && f.Type == "int");
@@ -140,8 +143,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var properties = Act(source).First().Properties;
+            var ci = Act(source).First();
+            var properties = ci.Properties;
 
+            Assert.Equal(2, ci.ChildrenNodes.Count());
             Assert.Equal(2, properties.Count);
             Assert.Contains(properties,
                 p => p.Name == "IntProp" && p.Type == "int");
@@ -163,8 +168,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var indexers = Act(source).First().Indexers;
+            var ci = Act(source).First();
+            var indexers = ci.Indexers;
 
+            Assert.Equal(2, ci.ChildrenNodes.Count());
             Assert.Equal(2, indexers.Count);
             Assert.Contains(indexers,
                 i => i.Name == "int[int]" && i.Type == "int" &&
@@ -188,8 +195,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var methods = Act(source).First().Methods;
+            var ci = Act(source).First();
+            var methods = ci.Methods;
 
+            Assert.Equal(2, ci.ChildrenNodes.Count());
             Assert.Equal(2, methods.Count);
             Assert.Contains(methods,
                 m => m.Name == "DoSomething()" && m.ReturnType == "void" &&
@@ -216,8 +225,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var constructors = Act(source).First().Constructors;
+            var ci = Act(source).First();
+            var constructors = ci.Constructors;
 
+            Assert.Equal(2, ci.ChildrenNodes.Count());
             Assert.Equal(2, constructors.Count);
             Assert.Contains(constructors,
                 c => c.Name == "MyClass()" && c.ReturnType == "void" &&
@@ -243,8 +254,10 @@ namespace DotBook.Tests.Model.Entities
                 }
             ";
 
-            var actual = Act(source).First().Operators.First();
+            var ci = Act(source).First();
+            var actual = ci.Operators.First();
 
+            Assert.Single(ci.ChildrenNodes);
             Assert.Equal("int operator +(byte one, byte two)", actual.Signature);
         }
 
