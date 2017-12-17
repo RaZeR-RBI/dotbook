@@ -1,5 +1,7 @@
 ﻿using DotBook.Model;
+using DotBook.Model.Entities;
 using DotBook.Model.Members;
+using DotBook.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +44,24 @@ namespace DotBook.Tests.Model.Members
                 m.Signature == "int GetResult<T>(T input)" &&
                 m.Parameters.Single().Name == "input" &&
                 m.Parameters.Single().Type == "T");
+        }
+
+        [Fact]
+        public void ShouldHaveParent()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    class MyClass
+                    {
+                        void DoSomething();
+                    }
+                }
+            ";
+
+            var info = Act(source).First();
+            Assert.False(info.IsRoot());
+            Assert.IsType<ClassInfo>(info.Parent);
         }
     }
 }

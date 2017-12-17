@@ -1,4 +1,5 @@
 using DotBook.Model;
+using DotBook.Processing;
 using System;
 using System.Linq;
 using Xunit;

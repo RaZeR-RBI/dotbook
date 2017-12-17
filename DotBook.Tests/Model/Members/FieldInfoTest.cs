@@ -1,5 +1,7 @@
 ﻿using DotBook.Model;
+using DotBook.Model.Entities;
 using DotBook.Model.Members;
+using DotBook.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +80,24 @@ namespace DotBook.Tests.Model.Members
                 f => f.Name == "SomeInt" && f.Value == null && f.Type == "int");
             Assert.Contains(fields, 
                 f => f.Name == "DefinedLong" && f.Value == "1337" && f.Type == "long");
+        }
+        
+        [Fact]
+        public void ShouldHaveParent()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    class MyClass
+                    {
+                        int SomeInt;
+                    }
+                }
+            ";
+
+            var info = Act(source).First();
+            Assert.False(info.IsRoot());
+            Assert.IsType<ClassInfo>(info.Parent);
         }
     }
 }

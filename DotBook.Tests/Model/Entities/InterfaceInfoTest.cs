@@ -1,5 +1,6 @@
 ﻿using DotBook.Model;
 using DotBook.Model.Entities;
+using DotBook.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -167,8 +168,7 @@ namespace DotBook.Tests.Model.Entities
                 m.Parameters.Single().Name == "input" &&
                 m.Parameters.Single().Type == "string");
         }
-
-
+        
         [Fact]
         public void ShouldIncludeDocumentation()
         {
@@ -186,6 +186,22 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.NotNull(info.Documentation);
             Assert.Contains("Useful interface", info.Documentation);
+        }
+        
+        [Fact]
+        public void ShouldHaveParent()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    interface MyInterface { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.False(info.IsRoot());
+            Assert.IsType<NamespaceInfo>(info.Parent);
         }
     }
 }

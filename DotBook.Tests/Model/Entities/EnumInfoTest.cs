@@ -1,5 +1,6 @@
 ﻿using DotBook.Model;
 using DotBook.Model.Entities;
+using DotBook.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,22 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.NotNull(info.Documentation);
             Assert.Contains("Useful enum", info.Documentation);
+        }
+
+        [Fact]
+        public void ShouldHaveParent()
+        {
+            var source = @"
+                namespace MyAssembly
+                {
+                    enum MyEnum { }
+                }
+            ";
+
+            var info = Act(source).First();
+
+            Assert.False(info.IsRoot());
+            Assert.IsType<NamespaceInfo>(info.Parent);
         }
     }
 }

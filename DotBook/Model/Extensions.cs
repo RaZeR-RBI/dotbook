@@ -33,12 +33,6 @@ namespace DotBook.Model
             return result;
         }
 
-        public static bool IsRoot<T>(this INode<T> node) =>
-            node.ParentNode == null;
-
-        public static bool IsLeaf<T>(this INode<T> node) =>
-            node.ChildrenNodes == null || node.ChildrenNodes.Count() == 0;
-
         public static void AddChildTypes(this ITypeContainer parent, 
             MemberDeclarationSyntax s,
             SortedSet<ClassInfo> classes = null,
