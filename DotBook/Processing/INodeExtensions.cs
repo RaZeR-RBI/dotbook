@@ -38,6 +38,14 @@ namespace DotBook.Processing
         public static bool IsLeaf<T>(this INode<T> node) =>
             node.ChildrenNodes == null || node.ChildrenNodes.Count() == 0;
 
+        public static INode<T> GetRoot<T>(this INode<T> node)
+        {
+            var result = node;
+            while (!result.IsRoot() || result == null)
+                result = result.ParentNode;
+            return result;
+        }
+
         public static INode<T> LocateClosestRelative<T>(this INode<T> child,
             Func<INode<T>, bool> predicate, out INode<T> commonAncestor)
         {

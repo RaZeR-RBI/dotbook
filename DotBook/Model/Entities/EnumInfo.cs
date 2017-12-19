@@ -23,13 +23,11 @@ namespace DotBook.Model.Entities
 
         public string Documentation { get; }
 
-        public IReadOnlyCollection<IMember> Members => CastJoin<IMember>(_values);
+        public IReadOnlyCollection<IMember> Members => null;
         public ITypeContainer Parent { get; }
 
         public INode<INameable> ParentNode => Parent;
-
-        public IEnumerable<INode<INameable>> ChildrenNodes =>
-            CastJoin<INode<INameable>>(_values);
+        public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
 
         public EnumInfo(EnumDeclarationSyntax decl, ITypeContainer parent)
@@ -64,26 +62,16 @@ namespace DotBook.Model.Entities
         public int CompareTo(object obj) =>
             FullName.CompareTo((obj as EnumInfo)?.FullName);
 
-        public class EnumValue : IMember
+        public class EnumValue
         {
             public string Key { get; }
             public string Value { get; }
-
-            public IMemberContainer Parent { get; }
-
-            public string Name => Key;
-
-            public string FullName { get => $"{Parent.FullName}.{Name}"; }
 
             private static IReadOnlyCollection<Modifier> _visibility =
                 new List<Modifier>() { Modifier.Public };
             public IReadOnlyCollection<Modifier> Modifiers => _visibility;
 
             public string Documentation { get; }
-
-            public INode<INameable> ParentNode => Parent;
-
-            public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
             public EnumValue(EnumMemberDeclarationSyntax decl, EnumInfo parent)
             {
@@ -94,7 +82,7 @@ namespace DotBook.Model.Entities
             }
 
             public int CompareTo(object obj) =>
-                FullName.CompareTo((obj as EnumValue)?.FullName);
+                Key.CompareTo((obj as EnumValue)?.Key);
         }
     }
 }

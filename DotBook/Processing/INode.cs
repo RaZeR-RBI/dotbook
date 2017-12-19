@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DotBook.Processing
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public interface INode<T>
     {
         INode<T> ParentNode { get; }
+
+        [JsonProperty("children")]
         IEnumerable<INode<T>> ChildrenNodes { get; }
     }
 }
