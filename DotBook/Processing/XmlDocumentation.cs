@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotBook.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,5 +34,8 @@ namespace DotBook.Processing
 
             Nodes = root.ChildNodes.Cast<XmlNode>();
         }
+
+        public Optional<XmlNode> GetSummary() =>
+            Optional.Of(Nodes.FirstOrDefault(n => n.Name == "summary"));
     }
 }

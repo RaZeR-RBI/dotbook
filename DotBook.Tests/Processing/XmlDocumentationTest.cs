@@ -38,5 +38,22 @@ namespace DotBook.Tests.Processing
             Assert.Contains(nodes, n =>
                 n.InnerText == nonXmlComment && n.Name == "summary");
         }
+
+        [Fact]
+        public void ShouldReturnSummaryIfPresent()
+        {
+            var withoutSummary = true;
+            var withSummary = false;
+
+            var commentWithoutSummary = Act("<returns>Something</returns>")
+                .GetSummary();
+            var commentWithSummary = Act("<summary>Something</summary>")
+                .GetSummary();
+            commentWithoutSummary.IfPresent(n => withoutSummary = false);
+            commentWithSummary.IfPresent(n => withSummary = true);
+
+            Assert.True(withoutSummary);
+            Assert.True(withSummary);
+        }
     }
 }
