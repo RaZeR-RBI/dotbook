@@ -17,8 +17,8 @@ namespace DotBook
         {
             public string InputDirectory { get; set; }
             public string OutputDirectory { get; set; }
-            public List<Modifier> Visibility { get; }
-            public bool UseHashAsLink { get; }
+            public List<Modifier> Visibility { get; set; }
+            public bool UseHashAsLink { get; set; }
         }
 
         /// <summary>
