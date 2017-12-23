@@ -18,18 +18,18 @@ namespace DotBook.Model.Members
 
             Name = $"{decl.Identifier.Text}{typeParams}" +
                 $"({string.Join(", ", paramTypes)})";
-
-            Signature = $"{decl.ReturnType} {decl.Identifier.Text}" +
-                $"{typeParams}{decl.ParameterList}";
-
-            if (decl.HasLeadingTrivia)
-                Documentation = GetDocumentation(decl.GetLeadingTrivia());
-
+            _parameters = Parse(decl.ParameterList);
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
 
-            _parameters = Parse(decl.ParameterList);
+            var paramSyntax = string.Join(",\n\t", _parameters);
+            Signature = $"{decl.ReturnType} {decl.Identifier.Text}" +
+                $"{typeParams}(\n\t{paramSyntax}\n)";
+
+            if (decl.HasLeadingTrivia)
+                Documentation = GetDocumentation(decl.GetLeadingTrivia());
+
             ReturnType = decl.ReturnType.ToString();
             Parent = parent;
         }

@@ -8,10 +8,11 @@ using static DotBook.Logger;
 using DotBook.Model;
 using DotBook.Processing;
 using System.Collections.Generic;
+using DotBook.Backend;
 
 namespace DotBook
 {
-    class Program
+    public class Program
     {
         public class ApplicationArguments
         {
@@ -25,7 +26,7 @@ namespace DotBook
         /// The DotBook entry point.
         /// </summary>
         /// <param name="args">Command line args</param>
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var p = new FluentCommandLineParser<ApplicationArguments>();
             p.Setup(arg => arg.OutputDirectory)
@@ -86,6 +87,10 @@ namespace DotBook
             Info("Creating documentation tree");
             var entities = sourceInfo.WithVisibility(modifiers: Modifier.Public);
             File.WriteAllText(Path.Combine(output, "structure.json"), entities.AsJson());
+
+            // TODO: Add output format selection
+            Info("Writing documentation files");
+            FileWriters.Markdown(output).Write(entities);
         }
     }
 }

@@ -15,5 +15,7 @@ namespace DotBook.Model.Members
             Name = decl.Identifier.Text;
             Type = decl.Type.ToString();
         }
+
+        public override string ToString() => $"{Type} {Name}";
     }
 }

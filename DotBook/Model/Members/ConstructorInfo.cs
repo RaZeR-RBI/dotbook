@@ -19,13 +19,15 @@ namespace DotBook.Model.Members
                 Documentation = GetDocumentation(decl.GetLeadingTrivia());
 
             Name = $"{decl.Identifier.Text}({string.Join(", ", paramTypes)})";
-            Signature = $"{decl.Identifier.Text}{decl.ParameterList}";
-
+            _parameters = Parse(decl.ParameterList);
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
 
-            _parameters = Parse(decl.ParameterList);
+            var paramSyntax = string.Join(",\n\t", _parameters);
+            Signature = $"{decl.Identifier.Text}(\n\t{paramSyntax}\n)";
+
+
             ReturnType = "void";
             Parent = parent;
         }

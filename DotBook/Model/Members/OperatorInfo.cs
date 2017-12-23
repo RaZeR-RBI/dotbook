@@ -19,14 +19,15 @@ namespace DotBook.Model.Members
 
             ReturnType = decl.ReturnType.ToString();
             Name = $"{decl.OperatorToken}({string.Join(", ", paramTypes)})";
-            Signature = $"{ReturnType} operator {decl.OperatorToken}" +
-                $"{decl.ParameterList}";
-
+            _parameters = Parse(decl.ParameterList);
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
+            
+            var paramSyntax = string.Join(",\n\t", _parameters);
+            Signature = $"{ReturnType} operator {decl.OperatorToken}" +
+                $"(\n\t{paramSyntax}\n)";
 
-            _parameters = Parse(decl.ParameterList);
             Parent = parent;
         }
     }

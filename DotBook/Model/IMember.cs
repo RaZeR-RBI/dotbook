@@ -5,8 +5,7 @@ using System.Text;
 
 namespace DotBook.Model
 {
-    public interface IMember : INameable, IModifiable, IDocumentable, IComparable,
-        INode<INameable>
+    public interface IMember : IDocumentationNode, IModifiable, IComparable
     {
         IMemberContainer Parent { get; }
     }

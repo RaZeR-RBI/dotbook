@@ -1,13 +1,13 @@
 ﻿using DotBook.Model.Entities;
 using DotBook.Model.Members;
 using DotBook.Processing;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DotBook.Utils;
 
 namespace DotBook.Model
 {
@@ -31,6 +31,25 @@ namespace DotBook.Model
             foreach (var source in sources)
                 result.AddRange(source.Cast<T>());
             return result;
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
+        {
+            foreach(var item in items) action(item);
+        }
+
+        public static Optional<R> MaybeIs<T, R>(this T obj)
+            where T : class
+            where R : class
+        {
+            if (obj is R) return Optional.Of(obj as R);
+            return Optional.None<R>();
+        }
+
+        public static IEnumerable<T> IfAny<T>(this IEnumerable<T> items, Action action)
+        {
+            if (items.Any()) action();
+            return items;
         }
 
         public static void AddChildTypes(this ITypeContainer parent, 
@@ -89,5 +108,10 @@ namespace DotBook.Model
                 default: return input.First().ToString().ToUpper() + input.Substring(1);
             }
         }
+
+        public static string SingleLine(this string input) =>
+            input.Replace("\n\t", " ").Replace("\t", "").Replace("\n", "")
+                .Replace("( ", "(")
+                .Replace(" )", ")");
     }
 }

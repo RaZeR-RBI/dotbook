@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using static DotBook.Logger;
 
 namespace DotBook.Processing
 {
@@ -13,6 +14,7 @@ namespace DotBook.Processing
 
         public XmlDocumentation(string source)
         {
+            if (source == null) source = "";
             var header = "<?xml version='1.0' encoding='UTF-8' ?>";
             var rootOpen = "<root>";
             var rootClose = "</root>";
@@ -23,6 +25,11 @@ namespace DotBook.Processing
             doc.LoadXml(docSource);
 
             var root = doc.SelectSingleNode("root");
+            if (!root.HasChildNodes)
+            {
+                Nodes = Enumerable.Empty<XmlNode>();
+                return;
+            }
 
             if (root.FirstChild.NodeType == XmlNodeType.Text)
             {
@@ -37,5 +44,21 @@ namespace DotBook.Processing
 
         public Optional<XmlNode> GetSummary() =>
             Optional.Of(Nodes.FirstOrDefault(n => n.Name == "summary"));
+
+        public IEnumerable<XmlNode> GetExamples() =>
+            Nodes.Where(n => n.Name == "example");
+
+        public IEnumerable<XmlNode> GetExceptions() =>
+            Nodes.Where(n => n.Name == "exception");
+
+        public IEnumerable<(string name, string desc)> GetParameters() =>
+            Nodes.Where(n => n.Name == "param")
+                .Select(n => {
+                    var name = n.Attributes.OfType<XmlAttribute>()
+                        .FirstOrDefault(a => a.Name == "name")?
+                        .InnerText;
+                    var desc = n.InnerText;
+                    return (name, desc);
+                });
     }
 }

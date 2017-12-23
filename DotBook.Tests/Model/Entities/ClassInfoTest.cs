@@ -203,11 +203,11 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(2, methods.Count);
             Assert.Contains(methods,
                 m => m.Name == "DoSomething()" && m.ReturnType == "void" &&
-                m.Signature == "void DoSomething()" &&
+                m.Signature.SingleLine() == "void DoSomething()" &&
                 m.Parameters.Count == 0);
             Assert.Contains(methods,
                 m => m.Name == "GetResult(string)" && m.ReturnType == "int" &&
-                m.Signature == "int GetResult(string input)" &&
+                m.Signature.SingleLine() == "int GetResult(string input)" &&
                 m.Parameters.Single().Name == "input" &&
                 m.Parameters.Single().Type == "string");
         }
@@ -233,11 +233,11 @@ namespace DotBook.Tests.Model.Entities
             Assert.Equal(2, constructors.Count);
             Assert.Contains(constructors,
                 c => c.Name == "MyClass()" && c.ReturnType == "void" &&
-                c.Signature == "MyClass()" &&
+                c.Signature.SingleLine() == "MyClass()" &&
                 c.Parameters.Count == 0);
             Assert.Contains(constructors,
                 c => c.Name == "MyClass(string)" && c.ReturnType == "void" &&
-                c.Signature == "MyClass(string input)" &&
+                c.Signature.SingleLine() == "MyClass(string input)" &&
                 c.Parameters.Single().Name == "input" &&
                 c.Parameters.Single().Type == "string");
         }
@@ -259,7 +259,8 @@ namespace DotBook.Tests.Model.Entities
             var actual = ci.Operators.First();
 
             Assert.Single(ci.ChildrenNodes);
-            Assert.Equal("int operator +(byte one, byte two)", actual.Signature);
+            Assert.Equal("int operator +(byte one, byte two)", 
+                actual.Signature.SingleLine());
         }
 
         [Fact]

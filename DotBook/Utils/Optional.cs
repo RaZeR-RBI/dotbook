@@ -10,9 +10,16 @@ namespace DotBook.Utils
 
         public Optional(T value) => this.value = value;
 
-        public void IfPresent(Action<T> action)
+        public Optional<T> IfPresent(Action<T> action)
         {
             if (value != null) action(value);
+            return this;
+        }
+
+        public Optional<T> IfNone(Action action)
+        {
+            if (value == null) action();
+            return this;
         }
     }
 

@@ -44,7 +44,7 @@ namespace DotBook.Processing
         [JsonProperty("link")]
         public string Link { get; }
 
-        public INameable BaseObject { get; }
+        public IDocumentationNode Base { get; }
 
         public INode<Entity> ParentNode { get; }
         public IEnumerable<INode<Entity>> ChildrenNodes { get; }
@@ -54,8 +54,8 @@ namespace DotBook.Processing
             Func<string, string> linkFromName)
         {
             var source = node as INameable;
-            (Name, FullName, Type, BaseObject) =
-            (source.Name, source.FullName, Resolve(source), source);
+            (Name, FullName, Type, Base) =
+            (source.Name, source.FullName, Resolve(source), source as IDocumentationNode);
 
             Link = linkFromName(FullName);
             if (node != null)

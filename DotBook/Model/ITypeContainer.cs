@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DotBook.Model
 {
-    public interface ITypeContainer : INameable, IDocumentable, IComparable, INode<INameable>
+    public interface ITypeContainer : IDocumentationNode, IComparable
     {
         IReadOnlyCollection<IMemberContainer> Types { get; }
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace DotBook.Model.Members
 {
@@ -17,7 +18,16 @@ namespace DotBook.Model.Members
         protected List<ParameterInfo> _parameters;
         public IReadOnlyCollection<ParameterInfo> Parameters => _parameters;
 
-        public string Signature { get; protected set; }
+        private string _signature;
+        public string Signature { 
+            get => _signature.SingleLine(); 
+            protected set => _signature = value;
+        }
+
+        public string Syntax =>
+            string.Join(" ", _modifiers.Select(e => e.ToString().ToLower())) +
+            $" {_signature}";
+
         public string ReturnType { get; protected set; }
 
         public string Documentation { get; protected set; }

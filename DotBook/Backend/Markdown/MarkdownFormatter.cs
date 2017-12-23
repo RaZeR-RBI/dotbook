@@ -8,34 +8,33 @@ using static System.Linq.Enumerable;
 
 namespace DotBook.Backend.Markdown
 {
-    internal abstract class MarkdownFormatterBase<TIn> : StringFormatterBase<TIn>
-        where TIn : INameable, IDocumentable, INode<INameable>
+    internal sealed class MarkdownFormatter : StringFormatterBase
     {
-        protected override StringFormatterBase<TIn> Header(string title, int level = 1)
+        protected override StringFormatterBase Header(string title, int level = 1)
         {
             WriteLine(" ".PadLeft(level + 1, '#') + title);
             return this;
         }
 
-        protected override StringFormatterBase<TIn> HorizontalRule()
+        protected override StringFormatterBase HorizontalRule()
         {
             WriteLine("------");
             return this;
         }
 
-        protected override StringFormatterBase<TIn> ParagraphStart()
+        protected override StringFormatterBase ParagraphStart()
         {
             WriteLine();
             return this;
         }
 
-        protected override StringFormatterBase<TIn> ParagraphEnd()
+        protected override StringFormatterBase ParagraphEnd()
         {
             WriteLine();
             return this;
         }
 
-        protected override StringFormatterBase<TIn> Text(string text,
+        protected override StringFormatterBase Text(string text,
             TextStyle style = TextStyle.Normal)
         {
             var result = text;
@@ -45,7 +44,7 @@ namespace DotBook.Backend.Markdown
             return this;
         }
 
-        protected override StringFormatterBase<TIn> List(IEnumerable<string> items,
+        protected override StringFormatterBase List(IEnumerable<string> items,
             ListStyle style = ListStyle.Bullet)
         {
             int i = 1;
@@ -60,19 +59,19 @@ namespace DotBook.Backend.Markdown
             return this;
         }
 
-        protected override StringFormatterBase<TIn> Link(string title, string url)
+        protected override StringFormatterBase Link(string title, string url)
         {
             Write($"[{title}]({url})");
             return this;
         }
 
-        protected override StringFormatterBase<TIn> Image(string url, string title = "")
+        protected override StringFormatterBase Image(string url, string title = "")
         {
             Write($"![{title}]({url})");
             return this;
         }
 
-        protected override StringFormatterBase<TIn> Table(List<string> header,
+        protected override StringFormatterBase Table(List<string> header,
             List<List<string>> rows)
         {
             WriteLine($"|{string.Join('|', header)}|");
@@ -82,15 +81,15 @@ namespace DotBook.Backend.Markdown
             return this;
         }
 
-        protected override StringFormatterBase<TIn> CodeInline(string code)
+        protected override StringFormatterBase CodeInline(string code)
         {
             Write($"`{code}`");
             return this;
         }
 
-        protected override StringFormatterBase<TIn> Code(string code)
+        protected override StringFormatterBase Code(string code)
         {
-            Write($"```csharp\n{code}\n```");
+            Write($"\n```csharp\n{code}\n```\n");
             return this;
         }
     }

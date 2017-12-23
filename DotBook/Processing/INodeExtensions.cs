@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DotBook.Utils;
 
 namespace DotBook.Processing
 {
@@ -96,6 +97,20 @@ namespace DotBook.Processing
             }
 
             return -1;
+        }
+
+        public static Optional<R> AncestorOfType<T, R>(this INode<T> child)
+            where T : class
+            where R : class
+        {
+            var node = child;
+            while (!node.IsRoot())
+            {
+                node = node.ParentNode;
+                if (node == null) return Optional.None<R>();
+                if (node is R) return Optional.Of(node as R);
+            }
+            return Optional.None<R>();
         }
     }
 }

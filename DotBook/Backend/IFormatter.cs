@@ -6,9 +6,8 @@ using System.Text;
 
 namespace DotBook.Backend
 {
-    public interface IFormatter<TOut, TIn>
-        where TIn : INameable, IDocumentable, INode<INameable>
+    public interface IFormatter<TOut>
     {
-        TOut Process(TIn entity);
+        TOut Process(IDocumentationNode entity);
     }
 }
