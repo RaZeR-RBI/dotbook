@@ -8,6 +8,6 @@ namespace DotBook.Backend
 {
     public interface IFormatter<TOut>
     {
-        TOut Process(IDocumentationNode entity);
+        TOut Process(Entity entity);
     }
 }

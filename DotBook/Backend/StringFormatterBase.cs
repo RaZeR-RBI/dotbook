@@ -9,6 +9,7 @@ using System.Xml;
 using Simplicity;
 using System.Linq;
 using DotBook.Model.Members;
+using static DotBook.Processing.EntityTypeResolver;
 
 namespace DotBook.Backend
 {
@@ -50,36 +51,49 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase CodeInline(string code);
         protected abstract StringFormatterBase Code(string code);
 
-        public string Process(IDocumentationNode entity)
+        public string Process(Entity entity)
         {
             Start();
-            var name = entity.Name;
+            var item = entity.Base;
+            var name = item.Name;
             Header(name);
+
+            // Entity type (method, class, etc.)
+            ParagraphStart()
+            .Text($"{Resolve(item)}", TextStyle.Bold)
+            .ParagraphEnd();
+
+            var @namespace = item.AncestorOfType<INameable, NamespaceInfo>();
+            @namespace.IfPresent(ns =>
+                ParagraphStart()
+                .Text("Namespace:", TextStyle.Bold)
+                .Text(" ")
+                .Link($"{ns.FullName}", entity.GetLink(ns.FullName))
+                .ParagraphEnd()
+            );
+
             HorizontalRule();
 
-            var doc = new XmlDocumentation(entity.Documentation);
+            var doc = new XmlDocumentation(item.Documentation);
             doc.GetSummary()
                 .IfPresent(summary =>
                     ParagraphStart()
                     .ContentsOf(summary)
                     .ParagraphEnd())
-                .IfNone(() =>
-                    Warning($"{entity.FullName} is missing summary"));
-
-            var @namespace = entity.AncestorOfType<INameable, NamespaceInfo>();
-            @namespace.IfPresent(ns =>
-                ParagraphStart()
-                .Text("Namespace:", TextStyle.Bold)
-                .Text($" {ns.FullName}")
-                .ParagraphEnd()
-            );
+                .IfNone(() => {
+                    Warning($"{entity.FullName} is missing summary");
+                    .ParagraphStart()
+                    .Text("No description provided", TextStyle.Italic)
+                    .ParagraphEnd();
+                });
             
-            entity.MaybeIs<IDocumentationNode, MethodInfoBase>()
+            item.MaybeIs<IDocumentationNode, MethodInfoBase>()
                 .IfPresent(m =>
                 {
                     Header("Syntax", 2)
                         .Code(m.Syntax);
-                    Header("Parameters", 3);
+                    if (doc.GetParameters().Any())
+                        Header("Parameters", 3);
                     doc.GetParameters().ForEach(p => {
                         if (p.name == null) 
                             Warning($"Missing param name: {name}");

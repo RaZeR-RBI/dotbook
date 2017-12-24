@@ -27,7 +27,7 @@ namespace DotBook.Processing
             while (nodes.Any())
             {
                 var node = nodes.Pop();
-                yield return node;
+                if (predicate(node)) yield return node;
                 foreach (var n in node.ChildrenNodes)
                     if (predicate(n)) nodes.Push(n);
             }

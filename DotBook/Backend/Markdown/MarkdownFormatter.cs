@@ -18,7 +18,7 @@ namespace DotBook.Backend.Markdown
 
         protected override StringFormatterBase HorizontalRule()
         {
-            WriteLine("------");
+            WriteLine("\n------\n");
             return this;
         }
 

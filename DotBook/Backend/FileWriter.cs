@@ -21,7 +21,7 @@ namespace DotBook.Backend
             if (entity.Base != null)
             {
                 var path = Path.Combine(subfolder, entity.Link + extension);
-                var contents = formatter.Process(entity.Base);
+                var contents = formatter.Process(entity);
                 if (!Directory.Exists(subfolder))
                     Directory.CreateDirectory(subfolder);
                 File.WriteAllText(path, contents);

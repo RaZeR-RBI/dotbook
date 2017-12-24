@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using static DotBook.Processing.EntityTypeResolver;
+using DotBook.Utils;
 
 namespace DotBook.Processing
 {
@@ -70,5 +71,13 @@ namespace DotBook.Processing
             Func<string, string> linkFromName) :
             this(node, predicate, linkFromName) =>
             ParentNode = parent;
+
+        public Entity GetByFullName(string fullName) =>
+            this.GetRoot()
+                .Descendants(n => (n as Entity)?.FullName == fullName)
+                .FirstOrDefault() as Entity;
+
+        public string GetLink(string fullName) =>
+            GetByFullName(fullName)?.Link ?? "";
     }
 }
