@@ -23,9 +23,8 @@ namespace DotBook.Model.Members
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
-
-            var paramSyntax = string.Join(",\n\t", _parameters);
-            Signature = $"{decl.Identifier.Text}(\n\t{paramSyntax}\n)";
+            
+            Signature = $"{decl.Identifier.Text}({ParamSyntax()})";
 
 
             ReturnType = "void";

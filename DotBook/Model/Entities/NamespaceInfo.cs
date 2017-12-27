@@ -37,6 +37,7 @@ namespace DotBook.Model.Entities
         public IEnumerable<INode<INameable>> ChildrenNodes =>
             CastJoin<INode<INameable>>(_classes, _structs, _enums, _interfaces);
 
+        // TODO: Add global namespace support
         public NamespaceInfo(NamespaceDeclarationSyntax declaration,
             SourceInfo parent) =>
             (Name, ParentNode) = (declaration.Name.ToString(), parent);

@@ -72,12 +72,19 @@ namespace DotBook.Processing
             this(node, predicate, linkFromName) =>
             ParentNode = parent;
 
-        public Entity GetByFullName(string fullName) =>
+        // TODO: Resolve from usings, not by closest distance
+        public Entity GetByName(string name) =>
             this.GetRoot()
-                .Descendants(n => (n as Entity)?.FullName == fullName)
-                .FirstOrDefault() as Entity;
+                .Descendants(
+                    n => (n as Entity)?.FullName == name)
+                    .FirstOrDefault() as Entity 
+                ??
+                this.LocateClosestRelative(
+                    n => (n as Entity)?.Name == name,
+                    out _) as Entity;
+
 
         public string GetLink(string fullName) =>
-            GetByFullName(fullName)?.Link ?? "";
+            GetByName(fullName)?.Link ?? "#";
     }
 }

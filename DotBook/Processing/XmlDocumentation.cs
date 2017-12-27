@@ -45,20 +45,33 @@ namespace DotBook.Processing
         public Optional<XmlNode> GetSummary() =>
             Optional.Of(Nodes.FirstOrDefault(n => n.Name == "summary"));
 
+        public Optional<XmlNode> GetRemarks() =>
+            Optional.Of(Nodes.FirstOrDefault(n => n.Name == "remarks"));
+
         public IEnumerable<XmlNode> GetExamples() =>
             Nodes.Where(n => n.Name == "example");
 
-        public IEnumerable<XmlNode> GetExceptions() =>
-            Nodes.Where(n => n.Name == "exception");
+        public IEnumerable<(string name, XmlNode root)> GetExceptions() =>
+            Nodes.Where(n => n.Name == "exception")
+                .Select(n => (n.AttributeValue("cref"), n));
 
-        public IEnumerable<(string name, string desc)> GetParameters() =>
+        public IEnumerable<(string name, XmlNode root)> GetParameters() =>
             Nodes.Where(n => n.Name == "param")
-                .Select(n => {
-                    var name = n.Attributes.OfType<XmlAttribute>()
-                        .FirstOrDefault(a => a.Name == "name")?
-                        .InnerText;
-                    var desc = n.InnerText;
-                    return (name, desc);
-                });
+                .Select(n => (n.AttributeValue("name"), n));
+
+        public IEnumerable<(string name, XmlNode root)> GetTypeParameters() =>
+            Nodes.Where(n => n.Name == "param")
+                .Select(n => (n.AttributeValue("name"), n));
+
+        public IEnumerable<string> GetSeeAlso() =>
+            Nodes.Where(n => n.Name == "seealso")
+                .Select(n => n.AttributeValue("cref"))
+                .Where(n => n != null);
+
+        public Optional<XmlNode> GetValue() =>
+            Optional.Of(Nodes.FirstOrDefault(n => n.Name == "value"));
+
+        public Optional<XmlNode> GetReturns() =>
+            Optional.Of(Nodes.FirstOrDefault(n => n.Name == "returns"));
     }
 }

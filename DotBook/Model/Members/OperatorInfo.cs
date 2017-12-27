@@ -24,9 +24,8 @@ namespace DotBook.Model.Members
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
             
-            var paramSyntax = string.Join(",\n\t", _parameters);
             Signature = $"{ReturnType} operator {decl.OperatorToken}" +
-                $"(\n\t{paramSyntax}\n)";
+                $"({ParamSyntax()})";
 
             Parent = parent;
         }

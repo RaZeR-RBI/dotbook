@@ -22,10 +22,9 @@ namespace DotBook.Model.Members
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
-
-            var paramSyntax = string.Join(",\n\t", _parameters);
+            
             Signature = $"{decl.ReturnType} {decl.Identifier.Text}" +
-                $"{typeParams}(\n\t{paramSyntax}\n)";
+                $"{typeParams}({ParamSyntax()})";
 
             if (decl.HasLeadingTrivia)
                 Documentation = GetDocumentation(decl.GetLeadingTrivia());

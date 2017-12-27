@@ -36,6 +36,10 @@ namespace DotBook.Model.Members
 
         public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
+        protected string ParamSyntax() =>
+            _parameters.Count == 0 ? "" :
+            $"\n\t{string.Join(",\n\t", _parameters)}\n";
+
         public int CompareTo(object obj) =>
             FullName.CompareTo((obj as MethodInfo)?.FullName);
     }
