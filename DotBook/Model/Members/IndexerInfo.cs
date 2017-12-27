@@ -8,27 +8,12 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class IndexerInfo : IMember
+    public class IndexerInfo : MethodInfoBase
     {
-        public string Name { get; }
-        public string FullName { get => $"{Parent.FullName}.{Name}"; }
-        public IMemberContainer Parent { get; }
-
-        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
-        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
-
-        public string Type { get; }
         public AccessorInfo Getter { get; }
         public AccessorInfo Setter { get; }
         public bool HasGetter => Getter != null;
         public bool HasSetter => Setter != null;
-
-        public string Documentation { get; }
-
-        public INode<INameable> ParentNode => Parent;
-
-        public IEnumerable<INode<INameable>> ChildrenNodes => null;
-
 
         public IndexerInfo(IndexerDeclarationSyntax decl, IMemberContainer parent)
         {
@@ -39,12 +24,14 @@ namespace DotBook.Model.Members
                 Documentation = GetDocumentation(decl.GetLeadingTrivia());
 
             Name = decl.Type.ToString() + $"[{string.Join(", ", paramList)}]";
+            _parameters = Parse(decl.ParameterList);
             _modifiers = decl.Modifiers
                 .ParseModifiers()
                 .WithDefaultVisibility(Modifier.Private);
 
             Parent = parent;
-            Type = decl.Type.ToString();
+            ReturnType = decl.Type.ToString();
+            Signature = $"{ReturnType} this[{ParamSyntax()}]";
 
             var accessors = decl.AccessorList?.Accessors
                 .Select(a => new AccessorInfo(a, this));
@@ -57,8 +44,5 @@ namespace DotBook.Model.Members
             else if (decl.ExpressionBody != null)
                 Getter = new AccessorInfo(this);
         }
-
-        public int CompareTo(object obj) => 
-            FullName.CompareTo((obj as IndexerInfo)?.FullName);
     }
 }

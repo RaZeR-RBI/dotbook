@@ -48,13 +48,15 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase List(IEnumerable<string> items,
             ListStyle style = ListStyle.Bullet);
         protected abstract StringFormatterBase Link(string title, string url);
+        protected abstract StringFormatterBase LinkListItem(string title, string url);
+        protected abstract StringFormatterBase LinkList(IDictionary<string, string> links);
         protected abstract StringFormatterBase Image(string url, string title = "");
         protected abstract StringFormatterBase Table(List<string> header,
             List<List<string>> rows);
         protected abstract StringFormatterBase CodeInline(string code);
         protected abstract StringFormatterBase Code(string code);
 
-        public string Process(Entity entity)
+        public string Process(Entity entity, IEnumerable<Modifier> visibilities)
         {
             Start(entity);
             var item = entity.Base;
@@ -78,6 +80,24 @@ namespace DotBook.Backend
                 .ParagraphEnd()
             );
 
+            // Base types
+            item.MaybeIs<IDocumentationNode, IDerivable>()
+                .IfPresent(t =>
+                    ParagraphStart()
+                    .Text("Base types:", TextStyle.Bold)
+                    .ParagraphEnd()
+                    .MemberLinks(t.BaseTypes));
+                    
+
+            // Parent member container (class, struct, etc.)
+            if (item.ParentNode is IMemberContainer)
+                ParagraphStart()
+                .Text("Member of:", TextStyle.Bold)
+                .Text(" ")
+                .Link((item.ParentNode as IMemberContainer).FullName,
+                    (entity.ParentNode as Entity).Link)
+                .ParagraphEnd();
+
             HorizontalRule();
 
             // Summary
@@ -92,7 +112,7 @@ namespace DotBook.Backend
                     .ParagraphEnd();
                 });
 
-            // Additional info if it's a method, constructor or operator
+            // If it's a method, constructor, operator or indexer
             item.MaybeIs<IDocumentationNode, MethodInfoBase>()
                 .IfPresent(m =>
                 {
@@ -106,22 +126,33 @@ namespace DotBook.Backend
                     doc.GetReturns()
                         .IfPresent(n =>
                             Header("Returns", 3)
-                            .ContentsOf(n));
+                            .ParagraphFrom(n));
                 });
 
+            // If it is a property, print info about it's value (if defined)
             item.MaybeIs<IDocumentationNode, PropertyInfo>()
                 .IfPresent(p => doc.GetValue().IfPresent(n =>
                         Header("Value")
                         .ParagraphFrom(n)
                     ));
 
+            // Type parameters
             doc.GetTypeParameters()
                 .IfAny(() => Header("Type parameters", 3))
                 .ForEach(p => PrintParameterInfo(fullName, "type parameter", p));
 
+            // Print if it throws anything
             doc.GetExceptions()
                 .IfAny(() => Header("Exceptions", 3))
                 .ForEach(p => PrintParameterInfo(fullName, "exception", p));
+
+            // Print type members if it's a type
+            item.MaybeIs<IDocumentationNode, IMemberContainer>()
+                .IfPresent(c => PrintChildrenInfo("Members", c.Members, visibilities));
+
+            // Print nested types if they exist
+            item.MaybeIs<IDocumentationNode, ITypeContainer>()
+                .IfPresent(c => PrintChildrenInfo("Nested types", c.Types, visibilities));
 
             doc.GetRemarks().IfPresent(s =>
                 Header("Remarks", 2)
@@ -133,9 +164,7 @@ namespace DotBook.Backend
 
             doc.GetSeeAlso()
                 .IfAny(() => Header("See also", 2))
-                .ForEach(s => ParagraphStart()
-                         .MemberLink(s)
-                         .ParagraphEnd());
+                .ForEach(m => MemberLinkList(m));
 
             return Result();
         }
@@ -155,6 +184,30 @@ namespace DotBook.Backend
                 )
                 .Do();
             return this;
+        }
+
+        private void PrintChildrenInfo<T>(string header, IEnumerable<T> items, 
+            IEnumerable<Modifier> visibilities)
+            where T : class, INameable
+        {
+            if (items == null) return;
+            var visibleItems = items.Where(member =>
+            {
+                var result = true;
+                member.MaybeIs<T, IModifiable>()
+                    .IfPresent(m =>
+                        result = m.Modifiers.Intersect(visibilities).Any());
+                return result;
+            });
+            if (!visibleItems.Any()) return;
+
+            Header(header, 2);
+            var groups = visibleItems.GroupBy(m => Resolve(m));
+            groups.ForEach(group =>
+            {
+                Header($"{group.Key.ToString()}", 3);
+                group.ForEach(m => MemberLinkList(m.Name));
+            });
         }
 
         private StringFormatterBase ContentsOf(XmlNode node)
@@ -187,5 +240,15 @@ namespace DotBook.Backend
             Link(memberName, entity.GetLink(memberName));
             return this;
         }
+
+        private StringFormatterBase MemberLinkList(string memberName)
+        {
+            if (memberName == null || memberName == "") return this;
+            LinkListItem(memberName, entity.GetLink(memberName));
+            return this;
+        }
+
+        private StringFormatterBase MemberLinks(IEnumerable<string> names) =>
+            LinkList(names.ToDictionary(name => name, name => entity.GetLink(name)));
     }
 }

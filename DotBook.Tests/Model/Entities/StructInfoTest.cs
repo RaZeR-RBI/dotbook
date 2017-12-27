@@ -156,10 +156,10 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.Equal(2, indexers.Count);
             Assert.Contains(indexers,
-                i => i.Name == "int[int]" && i.Type == "int" &&
+                i => i.Name == "int[int]" && i.ReturnType == "int" &&
                 i.HasGetter && !i.HasSetter);
             Assert.Contains(indexers,
-                i => i.Name == "long[string]" && i.Type == "long" &&
+                i => i.Name == "long[string]" && i.ReturnType == "long" &&
                 i.HasGetter && !i.HasSetter);
         }
         

@@ -60,8 +60,5 @@ namespace DotBook.Model
                 modifiers.Add(modifier);
             return modifiers;
         }
-
-        //public static SortedSet<Modifier> Sort(this SortedSet<Modifier> modifiers) =>
-        //modifiers.OrderBy(m => m, )
     }
 }

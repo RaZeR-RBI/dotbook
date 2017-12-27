@@ -90,7 +90,7 @@ namespace DotBook
 
             // TODO: Add output format selection
             Info("Writing documentation files");
-            FileWriters.Markdown(output).Write(entities);
+            FileWriters.Markdown(output).Write(entities, new[] { Modifier.Public });
         }
     }
 }

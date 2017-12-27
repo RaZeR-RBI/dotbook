@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using DotBook.Model;
 using DotBook.Processing;
 
 namespace DotBook.Backend
@@ -13,15 +16,17 @@ namespace DotBook.Backend
             (this.formatter, this.extension, this.baseFolder) =
             (formatter, extension, baseFolder);
 
-        public void Write(Entity entity) =>
-            Write(entity, baseFolder);
+        public void Write(Entity entity, IEnumerable<Modifier> visibilities) =>
+            Write(entity, visibilities, baseFolder);
 
-        private void Write(Entity entity, string subfolder)
+        private void Write(Entity entity, IEnumerable<Modifier> visibilities,
+            string subfolder)
         {
+            visibilities = visibilities.Intersect(Modifiers.Visibility);
             if (entity.Base != null)
             {
                 var path = Path.Combine(subfolder, entity.Link + extension);
-                var contents = formatter.Process(entity);
+                var contents = formatter.Process(entity, visibilities);
                 if (!Directory.Exists(subfolder))
                     Directory.CreateDirectory(subfolder);
                 File.WriteAllText(path, contents);
@@ -29,7 +34,7 @@ namespace DotBook.Backend
 
             if (entity.ChildrenNodes != null)
                 foreach (var child in entity.ChildrenNodes)
-                    Write(child as Entity);
+                    Write(child as Entity, visibilities);
         }
     }
 }

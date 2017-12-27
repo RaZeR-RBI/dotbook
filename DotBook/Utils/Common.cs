@@ -21,6 +21,10 @@ namespace DotBook.Utils
             syntax?.Parameters.Select(p => new ParameterInfo(p)).ToList() ??
                 new List<ParameterInfo>();
 
+        public static List<ParameterInfo> Parse(BracketedParameterListSyntax syntax) =>
+            syntax?.Parameters.Select(p => new ParameterInfo(p)).ToList() ??
+                new List<ParameterInfo>();
+
         public static string JoinWithDelimiter(this IEnumerable<string> input,
             string delimiter) => string.Join(delimiter, input);
 

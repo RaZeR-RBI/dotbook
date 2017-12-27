@@ -12,7 +12,7 @@ namespace DotBook.Backend.Markdown
     {
         protected override StringFormatterBase Header(string title, int level = 1)
         {
-            WriteLine(" ".PadLeft(level + 1, '#') + title);
+            WriteLine("\n" + " ".PadLeft(level + 1, '#') + title);
             return this;
         }
 
@@ -90,6 +90,25 @@ namespace DotBook.Backend.Markdown
         protected override StringFormatterBase Code(string code)
         {
             Write($"\n```csharp\n{code}\n```\n");
+            return this;
+        }
+
+        protected override StringFormatterBase LinkList(IDictionary<string, string> links)
+        {
+            WriteLine();
+            foreach (var pair in links)
+            {
+                LinkListItem(pair.Key, pair.Value);
+            }
+            WriteLine();
+            return this;
+        }
+
+        protected override StringFormatterBase LinkListItem(string title, string url)
+        {
+            Write("* ");
+            Link(title, url);
+            WriteLine();
             return this;
         }
     }

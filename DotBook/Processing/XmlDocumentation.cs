@@ -60,7 +60,7 @@ namespace DotBook.Processing
                 .Select(n => (n.AttributeValue("name"), n));
 
         public IEnumerable<(string name, XmlNode root)> GetTypeParameters() =>
-            Nodes.Where(n => n.Name == "param")
+            Nodes.Where(n => n.Name == "typeparam")
                 .Select(n => (n.AttributeValue("name"), n));
 
         public IEnumerable<string> GetSeeAlso() =>

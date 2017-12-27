@@ -26,7 +26,6 @@ namespace DotBook.Model.Members
             
             Signature = $"{decl.Identifier.Text}({ParamSyntax()})";
 
-
             ReturnType = "void";
             Parent = parent;
         }

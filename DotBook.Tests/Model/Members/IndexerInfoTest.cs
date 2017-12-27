@@ -72,13 +72,13 @@ namespace DotBook.Tests.Model.Members
 
             Assert.Equal(4, props.Count);
             Assert.Contains(props, f => f.Name == "int[int]" 
-                && f.Type == "int" && f.HasGetter && !f.HasSetter);
+                && f.ReturnType == "int" && f.HasGetter && !f.HasSetter);
             Assert.Contains(props, f => f.Name == "long[string]"
-                && f.Type == "long" && !f.HasGetter && f.HasSetter);
+                && f.ReturnType == "long" && !f.HasGetter && f.HasSetter);
             Assert.Contains(props, f => f.Name == "List<string>[Func<string, bool>]"
-                && f.Type == "List<string>" && f.HasGetter && !f.HasSetter);
+                && f.ReturnType == "List<string>" && f.HasGetter && !f.HasSetter);
             Assert.Contains(props, f => f.Name == "bool[Func<string, bool>]"
-                && f.Type == "bool" && f.HasGetter && f.HasSetter);
+                && f.ReturnType == "bool" && f.HasGetter && f.HasSetter);
         }
         
         [Fact]
