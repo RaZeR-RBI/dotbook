@@ -28,13 +28,13 @@ namespace DotBook.Backend
             Bullet, Ordered
         }
 
-        private StringBuilder builder = new StringBuilder();
-        private Entity entity = null;
+        protected StringBuilder builder = new StringBuilder();
+        protected Entity entity = null;
 
-        protected void Start(Entity entity) =>
+        protected virtual void Start(Entity entity) =>
             (builder, this.entity) = (new StringBuilder(), entity);
 
-        protected string Result() => builder.ToString().Trim();
+        protected virtual string Result() => builder.ToString().Trim();
 
         protected void Write(string text) => builder.Append(text);
         protected void WriteLine(string text = "") => builder.AppendLine(text);
@@ -98,29 +98,19 @@ namespace DotBook.Backend
 
             // Base types
             item.MaybeIs<IDocumentationNode, IDerivable>()
-                .IfPresent(t =>
+                .IfPresent(t => t.BaseTypes?.IfAny(() =>
                     ParagraphStart()
                     .Text("Base types:", TextStyle.Bold)
                     .ParagraphEnd()
-                    .MemberLinks(t.BaseTypes));
+                    .MemberLinks(t.BaseTypes)));
 
-
-            // Parent member container (class, struct, etc.) if it's a member
-            if (item.ParentNode is IMemberContainer)
-                ParagraphStart()
-                .Text("Member of:", TextStyle.Bold)
-                .Text(" ")
-                .Link((item.ParentNode as IMemberContainer).FullName,
-                    (entity.ParentNode as Entity).Link)
-                .ParagraphEnd();
-
-            // Parent type container (namespace or other type) if it's a type
-            if (item.ParentNode is ITypeContainer)
+            // Declaration info
+            if (item.ParentNode != null && item.ParentNode is IDocumentationNode)
                 ParagraphStart()
                 .Text("Declared in:", TextStyle.Bold)
                 .Text(" ")
-                .Link((item.ParentNode as ITypeContainer).FullName,
-                    (entity.ParentNode as Entity).Link)
+                .Link((item.ParentNode as IDocumentationNode).FullName,
+                    (entity.ParentNode as Entity).Link + Extension)
                 .ParagraphEnd();
 
             HorizontalRule();

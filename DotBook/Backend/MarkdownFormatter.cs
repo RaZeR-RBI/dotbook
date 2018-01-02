@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using static System.Linq.Enumerable;
 
-namespace DotBook.Backend.Markdown
+namespace DotBook.Backend
 {
     internal sealed class MarkdownFormatter : StringFormatterBase
     {

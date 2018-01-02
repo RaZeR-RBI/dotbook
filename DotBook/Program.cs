@@ -20,6 +20,7 @@ namespace DotBook
             public string OutputDirectory { get; set; }
             public List<Modifier> Visibility { get; set; }
             public bool UseHashAsLink { get; set; }
+            public FileFormat Format { get; set; }
         }
 
         /// <summary>
@@ -52,6 +53,12 @@ namespace DotBook
                                  "allow deep hierarchies." +
                                  "If false, uses escaped type/member name." +
                                  "Defaults to 'false'.");
+
+            p.Setup(arg => arg.Format)
+                .As('f', "format")
+                .SetDefault(FileFormat.Markdown)
+                .WithDescription("Sets the output format. Default is Markdown." +
+                                 "Available formats: Markdown, Html");
 
             p.SetupHelp("?", "help")
                 .Callback(text => Console.WriteLine(text));
@@ -89,8 +96,11 @@ namespace DotBook
             File.WriteAllText(Path.Combine(output, "structure.json"), entities.AsJson());
 
             // TODO: Add output format selection
+            var format = options.Format;
             Info("Writing documentation files");
-            FileWriters.Markdown(output).Write(entities, new[] { Modifier.Public });
+            FileWriters
+                .OfType(format, output)
+                .Write(entities, new[] { Modifier.Public });
         }
     }
 }
