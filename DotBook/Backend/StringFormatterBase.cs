@@ -34,7 +34,7 @@ namespace DotBook.Backend
         protected void Start(Entity entity) =>
             (builder, this.entity) = (new StringBuilder(), entity);
 
-        protected string Result() => builder.ToString();
+        protected string Result() => builder.ToString().Trim();
 
         protected void Write(string text) => builder.Append(text);
         protected void WriteLine(string text = "") => builder.AppendLine(text);
@@ -56,9 +56,25 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase CodeInline(string code);
         protected abstract StringFormatterBase Code(string code);
 
+        protected abstract string Extension { get; }
+
         public string Process(Entity entity, IEnumerable<Modifier> visibilities)
         {
             Start(entity);
+
+            if (entity.IsRoot())
+            {
+                Header("Namespaces");
+                var links = new Dictionary<string, string>();
+                entity.ChildrenNodes.ForEach(c =>
+                {
+                    var child = c as Entity;
+                    links.Add(child.FullName, child.Link + Extension);
+                });
+                LinkList(links);
+                return Result();
+            }
+
             var item = entity.Base;
             var name = item.Name;
             var fullName = item.FullName;
@@ -175,6 +191,9 @@ namespace DotBook.Backend
                 .IfAny(() => Header("See also", 2))
                 .ForEach(m => MemberLinkList(m));
 
+            HorizontalRule()
+                .Link("Back to index", "index" + Extension);
+
             return Result();
         }
 
@@ -246,18 +265,19 @@ namespace DotBook.Backend
         private StringFormatterBase MemberLink(string memberName)
         {
             if (memberName == null || memberName == "") return this;
-            Link(memberName, entity.GetLink(memberName));
+            Link(memberName, entity.GetLink(memberName) + Extension);
             return this;
         }
 
         private StringFormatterBase MemberLinkList(string memberName)
         {
             if (memberName == null || memberName == "") return this;
-            LinkListItem(memberName, entity.GetLink(memberName));
+            LinkListItem(memberName, entity.GetLink(memberName) + Extension);
             return this;
         }
 
         private StringFormatterBase MemberLinks(IEnumerable<string> names) =>
-            LinkList(names.ToDictionary(name => name, name => entity.GetLink(name)));
+            LinkList(names.ToDictionary(name => name,
+                name => entity.GetLink(name) + Extension));
     }
 }

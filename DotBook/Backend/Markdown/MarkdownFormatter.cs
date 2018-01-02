@@ -10,6 +10,8 @@ namespace DotBook.Backend.Markdown
 {
     internal sealed class MarkdownFormatter : StringFormatterBase
     {
+        protected override string Extension => ".md";
+
         protected override StringFormatterBase Header(string title, int level = 1)
         {
             WriteLine("\n" + " ".PadLeft(level + 1, '#') + title);

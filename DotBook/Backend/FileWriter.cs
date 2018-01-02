@@ -23,14 +23,13 @@ namespace DotBook.Backend
             string subfolder)
         {
             visibilities = visibilities.Intersect(Modifiers.Visibility);
-            if (entity.Base != null)
-            {
-                var path = Path.Combine(subfolder, entity.Link + extension);
-                var contents = formatter.Process(entity, visibilities);
-                if (!Directory.Exists(subfolder))
-                    Directory.CreateDirectory(subfolder);
-                File.WriteAllText(path, contents);
-            }
+            var link = entity.IsRoot() ? "index" : entity.Link;
+
+            var path = Path.Combine(subfolder, link + extension);
+            var contents = formatter.Process(entity, visibilities);
+            if (!Directory.Exists(subfolder))
+                Directory.CreateDirectory(subfolder);
+            File.WriteAllText(path, contents);
 
             if (entity.ChildrenNodes != null)
                 foreach (var child in entity.ChildrenNodes)
