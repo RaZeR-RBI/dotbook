@@ -87,14 +87,23 @@ namespace DotBook.Backend
                     .Text("Base types:", TextStyle.Bold)
                     .ParagraphEnd()
                     .MemberLinks(t.BaseTypes));
-                    
 
-            // Parent member container (class, struct, etc.)
+
+            // Parent member container (class, struct, etc.) if it's a member
             if (item.ParentNode is IMemberContainer)
                 ParagraphStart()
                 .Text("Member of:", TextStyle.Bold)
                 .Text(" ")
                 .Link((item.ParentNode as IMemberContainer).FullName,
+                    (entity.ParentNode as Entity).Link)
+                .ParagraphEnd();
+
+            // Parent type container (namespace or other type) if it's a type
+            if (item.ParentNode is ITypeContainer)
+                ParagraphStart()
+                .Text("Declared in:", TextStyle.Bold)
+                .Text(" ")
+                .Link((item.ParentNode as ITypeContainer).FullName,
                     (entity.ParentNode as Entity).Link)
                 .ParagraphEnd();
 
@@ -186,7 +195,7 @@ namespace DotBook.Backend
             return this;
         }
 
-        private void PrintChildrenInfo<T>(string header, IEnumerable<T> items, 
+        private void PrintChildrenInfo<T>(string header, IEnumerable<T> items,
             IEnumerable<Modifier> visibilities)
             where T : class, INameable
         {

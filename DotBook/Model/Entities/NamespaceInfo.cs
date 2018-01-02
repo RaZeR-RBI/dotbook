@@ -6,6 +6,7 @@ using static DotBook.Model.Extensions;
 using static DotBook.Logger;
 using System.Linq;
 using DotBook.Processing;
+using Microsoft.CodeAnalysis;
 
 namespace DotBook.Model.Entities
 {
@@ -37,10 +38,12 @@ namespace DotBook.Model.Entities
         public IEnumerable<INode<INameable>> ChildrenNodes =>
             CastJoin<INode<INameable>>(_classes, _structs, _enums, _interfaces);
 
-        // TODO: Add global namespace support
         public NamespaceInfo(NamespaceDeclarationSyntax declaration,
-            SourceInfo parent) =>
+            SourceInfo parent)  =>
             (Name, ParentNode) = (declaration.Name.ToString(), parent);
+        
+        public NamespaceInfo(SourceInfo parent) =>
+            (Name, ParentNode) = ("global", parent);
 
         public void Populate(NamespaceDeclarationSyntax source)
         {
@@ -58,6 +61,9 @@ namespace DotBook.Model.Entities
             foreach (var member in source.Members)
                 this.AddChildTypes(member, _classes, _structs, _interfaces, _enums);
         }
+
+        public void Populate(SyntaxList<MemberDeclarationSyntax> members) =>
+            members.ForEach(m => this.AddChildTypes(m, _classes, _structs, _interfaces, _enums));
 
         public override bool Equals(object obj) => Equals(obj as NamespaceInfo);
 

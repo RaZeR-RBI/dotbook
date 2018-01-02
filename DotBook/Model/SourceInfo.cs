@@ -28,7 +28,15 @@ namespace DotBook.Model
         {
             if (!root.Members.Any()) return;
             var node = root.Members.First() as NamespaceDeclarationSyntax;
-            new NamespaceInfo(node, this).AddOrReuse(node, _namespaces);
+            if (node != null)
+                new NamespaceInfo(node, this).AddOrReuse(node, _namespaces);
+            else
+            {
+                if (!_namespaces.Any(n => n.Name == "global"))
+                    _namespaces.Add(new NamespaceInfo(this));
+                var global = _namespaces.FirstOrDefault(n => n.Name == "global");
+                global.Populate(root.Members);
+            }
         }
 
         public override string ToString() =>

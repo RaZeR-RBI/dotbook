@@ -39,5 +39,22 @@ namespace DotBook.Tests
             Assert.Contains(info.Namespaces, n => n.FullName == "MySuperAssembly");
             Assert.Contains(info.Namespaces, n => n.FullName == "MySuperAssembly.CoolFeature");
         }
+
+        [Fact]
+        public void ShouldSupportTypesWithoutNamespace()
+        {
+            var source1 = "class MyGlobalClass {}";
+            var source2 = "struct MyGlobalStruct {}";
+            var source3 = @"
+                interface MyGlobalInterface {}
+                enum MyGlobalEnum {}
+                ";
+
+            var info = Act(source1, source2, source3);
+
+            Assert.Equal(1, info.Namespaces.Count);
+            Assert.Contains(info.Namespaces, n => n.Name == "global");
+            Assert.Equal(4, info.Namespaces.First().ChildrenNodes.Count());
+        }
     }
 }
