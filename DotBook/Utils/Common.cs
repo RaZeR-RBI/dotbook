@@ -32,7 +32,7 @@ namespace DotBook.Utils
             trivia.Select(i => i.GetStructure())
                 .OfType<DocumentationCommentTriviaSyntax>()
                 .FirstOrDefault()?.Content.ToString()
-                .Split(Environment.NewLine)
+                .Split(new string[]{ Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim())
                 .Select(s => s.StartsWith("///") ? s.Remove(0, 3).Trim() : s)
                 .JoinWithDelimiter(Environment.NewLine);

@@ -48,7 +48,7 @@ namespace DotBook.Model
 
 
         public static Modifier AsModifierEnum(this SyntaxToken token) =>
-            Enum.Parse<Modifier>(token.Text.FirstCharToUpper());
+            (Modifier)Enum.Parse(typeof(Modifier), token.Text.FirstCharToUpper());
 
         public static SortedSet<Modifier> ParseModifiers(this SyntaxTokenList tokens) =>
             tokens.Select(AsModifierEnum).ToSortedSet();

@@ -9,6 +9,7 @@ using DotBook.Model;
 using DotBook.Processing;
 using System.Collections.Generic;
 using DotBook.Backend;
+using static System.Environment;
 
 namespace DotBook
 {
@@ -21,6 +22,13 @@ namespace DotBook
             public List<Modifier> Visibility { get; set; }
             public bool UseHashAsLink { get; set; }
             public FileFormat Format { get; set; }
+
+            public override string ToString() =>
+                $"Source directory: {InputDirectory ?? "(current)"}\n" +
+                $"Output directory: {OutputDirectory}\n" +
+                $"Format: {Format}\n" +
+                $"Visibility filter: {string.Join(",", Visibility)}\n" +
+                $"Using hashes as links: {UseHashAsLink}\n";
         }
 
         /// <summary>
@@ -30,6 +38,7 @@ namespace DotBook
         public static void Main(string[] args)
         {
             var p = new FluentCommandLineParser<ApplicationArguments>();
+            p.UseOwnOptionPrefix("-", "--");
             p.Setup(arg => arg.OutputDirectory)
                 .As('o', "output")
                 .SetDefault("doc")
@@ -53,7 +62,6 @@ namespace DotBook
                                  "allow deep hierarchies." +
                                  "If false, uses escaped type/member name." +
                                  "Defaults to 'false'.");
-
             p.Setup(arg => arg.Format)
                 .As('f', "format")
                 .SetDefault(FileFormat.Markdown)
@@ -61,12 +69,18 @@ namespace DotBook
                                  "Available formats: Markdown, Html");
 
             p.SetupHelp("?", "help")
-                .Callback(text => Console.WriteLine(text));
+                .Callback(text =>
+                {
+                    Console.WriteLine(text);
+                    Environment.Exit(0);
+                });
 
             p.Parse(args);
 
             try
             {
+                Info("Using the following parameters:");
+                Log($"{p.Object}");
                 Run(p.Object);
             }
             catch (PathTooLongException pex)
@@ -89,6 +103,9 @@ namespace DotBook
 
             Info($"Loading code from '{input}'");
             var nodes = CompilationUnits.FromFolder(input);
+            if (!nodes.Any())
+                Fatal($"No source files found in {input}");
+
             var sourceInfo = new SourceInfo(nodes.ToList());
 
             Info("Creating documentation tree");
@@ -98,9 +115,10 @@ namespace DotBook
             // TODO: Add output format selection
             var format = options.Format;
             Info("Writing documentation files");
-            FileWriters
-                .OfType(format, output)
+            format.BeginWritingAt(output)
                 .Write(entities, new[] { Modifier.Public });
+
+            Success($"Generated {entities.Descendants().Count()} documentation files");
         }
     }
 }

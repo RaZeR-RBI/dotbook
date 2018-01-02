@@ -76,10 +76,10 @@ namespace DotBook.Backend
         protected override StringFormatterBase Table(List<string> header,
             List<List<string>> rows)
         {
-            WriteLine($"|{string.Join('|', header)}|");
+            WriteLine($"|{string.Join("|", header)}|");
             WriteLine($"|{Repeat("-|", header.Count)}");
             foreach(var row in rows)
-                WriteLine($"|{string.Join('|', row)}|");
+                WriteLine($"|{string.Join("|", row)}|");
             return this;
         }
 

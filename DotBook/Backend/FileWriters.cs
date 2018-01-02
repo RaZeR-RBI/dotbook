@@ -15,7 +15,7 @@ namespace DotBook.Backend
         public static FileWriter Html(string baseFolder) =>
             new FileWriter(new HtmlFormatter(), ".html", baseFolder);
 
-        public static FileWriter OfType(FileFormat format, string baseFolder)
+        public static FileWriter BeginWritingAt(this FileFormat format, string baseFolder)
         {
             switch(format)
             {
