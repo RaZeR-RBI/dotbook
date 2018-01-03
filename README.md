@@ -1,9 +1,9 @@
 # About the project
-DotBook is a .NET CLI tool to generate human-friendly documentation from C# source files.
+DotBook is a .NET CLI tool for human-friendly documentation generation from C# source files.
 
 Currently supported formats are:
 * **Markdown** (can be uploaded to Github Pages directly)
-* **Html** (suitable for offline browsing or iframe integration)
+* **HTML** (suitable for offline browsing or iframe integration)
 
 # How to use
 1. Add the following item to your .csproj:
@@ -25,8 +25,10 @@ Option format: -option, --option
 * ```f, format``` - Sets the output format. Default is Markdown. Available formats: Markdown, Html
 * ```?, help``` - Displays the help message.
 
-## Examples
+# Examples
 ```dotnet doc```
+
 ```dotnet doc --format html```
+
 ```dotnet doc --src /my-module --output /my-module-docs```
 
