@@ -1,5 +1,4 @@
-﻿using Fclp;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,6 +9,7 @@ using DotBook.Processing;
 using System.Collections.Generic;
 using DotBook.Backend;
 using static System.Environment;
+using DotBook.Utils;
 
 namespace DotBook
 {
@@ -19,7 +19,7 @@ namespace DotBook
         {
             public string InputDirectory { get; set; }
             public string OutputDirectory { get; set; }
-            public List<Modifier> Visibility { get; set; }
+            public IEnumerable<Modifier> Visibility { get; set; }
             public bool UseHashAsLink { get; set; }
             public FileFormat Format { get; set; }
 
@@ -37,41 +37,43 @@ namespace DotBook
         /// <param name="args">Command line args</param>
         public static void Main(string[] args)
         {
-            var p = new FluentCommandLineParser<ApplicationArguments>();
+            var p = new ArgParser();
+            var arg = new ApplicationArguments();
             p.UseOwnOptionPrefix("-", "--");
-            p.Setup(arg => arg.OutputDirectory)
+            p.Setup(v => arg.OutputDirectory = string.Join(" ", v))
                 .As('o', "output")
                 .SetDefault("doc")
-                .WithDescription("Output directory for the generated documentation." +
+                .WithDescription("Output directory for the generated documentation. " +
                                  "If not specified, defaults to 'doc'.");
 
-            p.Setup(arg => arg.InputDirectory)
+            p.Setup(v => arg.InputDirectory = string.Join(" ", v))
                 .As('s', "src")
                 .WithDescription("Directory for C# code search");
 
-            p.Setup(arg => arg.Visibility)
+            p.Setup(v => arg.Visibility = v.ToEnum<Modifier>())
                 .As('v', "visibility")
-                .SetDefault(new List<Modifier>() { Modifier.Public })
+                .SetDefault("public")
                 .WithDescription("Include types and members with the specified " +
                                  "visibilities. Defaults to 'public'.");
 
-            p.Setup(arg => arg.UseHashAsLink)
+            p.Setup(v => bool.Parse(v.FirstOrDefault() ?? "true"))
                 .As('h', "use-hash")
-                .SetDefault(false)
+                .SetDefault("false")
                 .WithDescription("Use hashing for documentation filenames to " +
-                                 "allow deep hierarchies." +
-                                 "If false, uses escaped type/member name." +
+                                 "allow deep hierarchies. " +
+                                 "If false, uses escaped type/member name. " +
                                  "Defaults to 'false'.");
-            p.Setup(arg => arg.Format)
+
+            p.Setup(v => arg.Format = v.ToEnum<FileFormat>().First())
                 .As('f', "format")
-                .SetDefault(FileFormat.Markdown)
-                .WithDescription("Sets the output format. Default is Markdown." +
+                .SetDefault("Markdown")
+                .WithDescription("Sets the output format. Default is Markdown. " +
                                  "Available formats: Markdown, Html");
 
             p.SetupHelp("?", "help")
-                .Callback(text =>
+                .Callback(v =>
                 {
-                    Console.WriteLine(text);
+                    Console.WriteLine(string.Join("\n", p.GetHelp()));
                     Environment.Exit(0);
                 });
 
@@ -80,8 +82,8 @@ namespace DotBook
             try
             {
                 Info("Using the following parameters:");
-                Log($"{p.Object}");
-                Run(p.Object);
+                Log($"{arg}");
+                Run(arg);
             }
             catch (PathTooLongException pex)
             {

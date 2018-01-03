@@ -113,5 +113,13 @@ namespace DotBook.Model
             input.Replace("\n\t", " ").Replace("\t", "").Replace("\n", "")
                 .Replace("( ", "(")
                 .Replace(" )", ")");
+
+        public static IEnumerable<T> ToEnum<T>(this IEnumerable<string> values)
+            where T : struct, IComparable, IFormattable, IConvertible =>
+            values.Select(s => (T)Enum.Parse(typeof(T), s, true));
+
+        public static Optional<T> MaybeFirst<T>(this IEnumerable<T> values)
+            where T : class =>
+            Optional.Of(values.FirstOrDefault());
     }
 }
