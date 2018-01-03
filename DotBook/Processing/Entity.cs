@@ -38,6 +38,8 @@ namespace DotBook.Processing
         [JsonProperty("fullName")]
         public string FullName { get; }
 
+        public Entity NodeValue => this;
+
         [JsonProperty("type")]
         [JsonConverter(typeof(StringEnumConverter))]
         public EntityType Type { get; }
@@ -76,12 +78,12 @@ namespace DotBook.Processing
         public Entity GetByName(string name) =>
             this.GetRoot()
                 .Descendants(
-                    n => (n as Entity)?.FullName == name)
-                    .FirstOrDefault() as Entity 
+                    n => n?.NodeValue?.FullName == name)
+                    .FirstOrDefault()?.NodeValue
                 ??
                 this.LocateClosestRelative(
-                    n => (n as Entity)?.Name == name,
-                    out _) as Entity;
+                    n => n?.NodeValue?.Name == name,
+                    out _)?.NodeValue;
 
 
         public string GetLink(string fullName) =>

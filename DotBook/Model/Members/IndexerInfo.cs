@@ -25,11 +25,12 @@ namespace DotBook.Model.Members
 
             Name = decl.Type.ToString() + $"[{string.Join(", ", paramList)}]";
             _parameters = Parse(decl.ParameterList);
+            Parent = parent;
             _modifiers = decl.Modifiers
                 .ParseModifiers()
-                .WithDefaultVisibility(Modifier.Private);
+                .WithDefaultVisibility(Parent is InterfaceInfo ?
+                    Modifier.Public : Modifier.Private);
 
-            Parent = parent;
             ReturnType = decl.Type.ToString();
             Signature = $"{ReturnType} this[{ParamSyntax()}]";
 

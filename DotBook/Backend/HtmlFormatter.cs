@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using DotBook.Processing;
 
 namespace DotBook.Backend
@@ -39,6 +40,7 @@ namespace DotBook.Backend
             WriteLine($"<style>{styles}</style>");
             WriteLine("</head><body>");
         }
+        private string Escape(string str) => HttpUtility.HtmlEncode(str);
 
         protected override string Result()
         {
@@ -49,19 +51,19 @@ namespace DotBook.Backend
 
         protected override StringFormatterBase Code(string code)
         {
-            WriteLine($"<pre><code>{code}</code></pre>");
+            WriteLine($"<pre><code>{Escape(code)}</code></pre>");
             return this;
         }
 
         protected override StringFormatterBase CodeInline(string code)
         {
-            WriteLine($"<code>{code}</code>");
+            WriteLine($"<code>{Escape(code)}</code>");
             return this;
         }
 
         protected override StringFormatterBase Header(string title, int level = 1)
         {
-            WriteLine($"<h{level}>{title}</h{level}>");
+            WriteLine($"<h{level}>{Escape(title)}</h{level}>");
             return this;
         }
 
@@ -73,13 +75,13 @@ namespace DotBook.Backend
 
         protected override StringFormatterBase Image(string url, string title = "")
         {
-            WriteLine($"<img src=\"{url}\" alt=\"{title}\">");
+            WriteLine($"<img src=\"{Escape(url)}\" alt=\"{Escape(title)}\">");
             return this;
         }
 
         protected override StringFormatterBase Link(string title, string url)
         {
-            WriteLine($"<a href=\"{url}\">{title}</a>");
+            WriteLine($"<a href=\"{Escape(url)}\">{Escape(title)}</a>");
             return this;
         }
 
@@ -93,7 +95,7 @@ namespace DotBook.Backend
 
         protected override StringFormatterBase LinkListItem(string title, string url)
         {
-            WriteLine($"<li><a href=\"{url}\">{title}</a></li>");
+            WriteLine($"<li><a href=\"{Escape(url)}\">{Escape(title)}</a></li>");
             return this;
         }
 
@@ -101,7 +103,7 @@ namespace DotBook.Backend
         {
             var tag = style == ListStyle.Bullet ? "ul" : "ol";
             WriteLine($"<{tag}>");
-            foreach (var item in items) WriteLine($"<li>{item}</li>");
+            foreach (var item in items) WriteLine($"<li>{Escape(item)}</li>");
             WriteLine($"</{tag}>");
             return this;
         }
@@ -123,14 +125,14 @@ namespace DotBook.Backend
             WriteLine("<table>");
             WriteLine("<thead><tr>");
             foreach(var cell in header)
-                WriteLine($"<td>{cell}</td>");
+                WriteLine($"<td>{Escape(cell)}</td>");
             WriteLine("</tr></thead>");
             WriteLine("<tbody>");
             foreach (var row in rows)
             {
                 WriteLine("<tr>");
                 foreach(var cell in row)
-                    WriteLine($"<td>{row}</td>");
+                    WriteLine($"<td>{Escape(cell)}</td>");
                 WriteLine("</tr>");
             }
             WriteLine("</tbody>");
@@ -141,8 +143,8 @@ namespace DotBook.Backend
         protected override StringFormatterBase Text(string text, TextStyle style = TextStyle.Normal)
         {
             var result = text;
-            if (style.HasFlag(TextStyle.Bold)) result = $"<b>{result}</b>";
-            if (style.HasFlag(TextStyle.Italic)) result = $"<i>{result}</i>";
+            if (style.HasFlag(TextStyle.Bold)) result = $"<b>{Escape(result)}</b>";
+            if (style.HasFlag(TextStyle.Italic)) result = $"<i>{Escape(result)}</i>";
             Write(result);
             return this;
         }

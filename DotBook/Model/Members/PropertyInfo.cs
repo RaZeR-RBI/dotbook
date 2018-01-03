@@ -13,6 +13,8 @@ namespace DotBook.Model.Members
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
 
+        public INameable NodeValue => this;
+
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
 
@@ -35,11 +37,12 @@ namespace DotBook.Model.Members
             Name = decl.Identifier.Text;
             if (decl.HasLeadingTrivia)
                 Documentation = GetDocumentation(decl.GetLeadingTrivia());
+            Parent = parent;
             _modifiers = decl.Modifiers
                 .ParseModifiers()
-                .WithDefaultVisibility(Modifier.Private);
+                .WithDefaultVisibility(Parent is InterfaceInfo ?
+                    Modifier.Public : Modifier.Private);
 
-            Parent = parent;
             Type = decl.Type.ToString();
 
             var accessors = decl.AccessorList?.Accessors

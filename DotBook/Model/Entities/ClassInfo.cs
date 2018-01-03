@@ -16,6 +16,7 @@ namespace DotBook.Model.Entities
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
+        public INameable NodeValue => this;
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
         public IReadOnlyCollection<Modifier> Modifiers => _modifiers;

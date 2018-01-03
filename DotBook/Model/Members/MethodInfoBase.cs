@@ -10,6 +10,8 @@ namespace DotBook.Model.Members
     {
         public string Name { get; protected set; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
+
+        public INameable NodeValue => this;
         public IMemberContainer Parent { get; protected set; }
 
         protected SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();

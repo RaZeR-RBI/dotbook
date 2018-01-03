@@ -42,9 +42,9 @@ namespace DotBook
             p.UseOwnOptionPrefix("-", "--");
             p.Setup(v => arg.OutputDirectory = string.Join(" ", v))
                 .As('o', "output")
-                .SetDefault("doc")
+                .SetDefault("docs")
                 .WithDescription("Output directory for the generated documentation. " +
-                                 "If not specified, defaults to 'doc'.");
+                                 "If not specified, defaults to 'docs'.");
 
             p.Setup(v => arg.InputDirectory = string.Join(" ", v))
                 .As('s', "src")

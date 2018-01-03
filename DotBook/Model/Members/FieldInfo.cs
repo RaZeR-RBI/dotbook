@@ -12,6 +12,8 @@ namespace DotBook.Model.Members
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
+
+        public INameable NodeValue => this;
         public IMemberContainer Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();

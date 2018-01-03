@@ -33,7 +33,7 @@ namespace DotBook.Backend
 
             if (entity.ChildrenNodes != null)
                 foreach (var child in entity.ChildrenNodes)
-                    Write(child as Entity, visibilities);
+                    Write(child.NodeValue, visibilities);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace DotBook.Model.Entities
     {
         public string Name { get; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }
+        public INameable NodeValue => this;
         public ITypeContainer Parent { get; }
 
         private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();

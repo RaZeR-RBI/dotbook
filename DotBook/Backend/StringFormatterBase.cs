@@ -68,7 +68,7 @@ namespace DotBook.Backend
                 var links = new Dictionary<string, string>();
                 entity.ChildrenNodes.ForEach(c =>
                 {
-                    var child = c as Entity;
+                    var child = c.NodeValue;
                     links.Add(child.FullName, child.Link + Extension);
                 });
                 LinkList(links);

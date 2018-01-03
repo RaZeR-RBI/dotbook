@@ -21,6 +21,8 @@ namespace DotBook.Model
         public string Name => "";
         public string FullName => "";
 
+        public INameable NodeValue => this;
+
         public SourceInfo(List<CompilationUnitSyntax> roots) =>
             roots.ForEach(Process);
 

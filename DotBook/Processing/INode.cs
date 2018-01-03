@@ -9,6 +9,7 @@ namespace DotBook.Processing
     public interface INode<T>
     {
         INode<T> ParentNode { get; }
+        T NodeValue { get; }
 
         [JsonProperty("children")]
         IEnumerable<INode<T>> ChildrenNodes { get; }

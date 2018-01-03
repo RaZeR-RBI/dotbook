@@ -15,6 +15,7 @@ namespace DotBook.Model.Entities
     {
         public string Name { get; }
         public string FullName => Name;
+        public INameable NodeValue => this;
 
         private SortedSet<ClassInfo> _classes = new SortedSet<ClassInfo>();
         public IReadOnlyCollection<ClassInfo> Classes => _classes;
