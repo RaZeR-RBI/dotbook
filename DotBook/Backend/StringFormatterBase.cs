@@ -50,6 +50,8 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase Link(string title, string url);
         protected abstract StringFormatterBase LinkListItem(string title, string url);
         protected abstract StringFormatterBase LinkList(IDictionary<string, string> links);
+        protected abstract StringFormatterBase LinkTree<T>(INode<T> root, 
+            Func<T, (string title, string url)> builder);
         protected abstract StringFormatterBase Image(string url, string title = "");
         protected abstract StringFormatterBase Table(List<string> header,
             List<List<string>> rows);
@@ -64,14 +66,9 @@ namespace DotBook.Backend
 
             if (entity.IsRoot())
             {
-                Header("Namespaces");
-                var links = new Dictionary<string, string>();
-                entity.ChildrenNodes.ForEach(c =>
-                {
-                    var child = c.NodeValue;
-                    links.Add(child.FullName, child.Link + Extension);
-                });
-                LinkList(links);
+                Header("API Documentation");
+                foreach(var child in entity.ChildrenNodes)
+                    LinkTree(child, e => (e.Name, e.Link));
                 return Result();
             }
 
@@ -127,8 +124,8 @@ namespace DotBook.Backend
                     .ParagraphEnd();
                 });
 
-            // If it's a method, constructor, operator or indexer
-            item.MaybeIs<IDocumentationNode, MethodInfoBase>()
+            // If it's a member with syntax
+            item.MaybeIs<IDocumentationNode, MemberInfoBase>()
                 .IfPresent(m =>
                 {
                     Header("Syntax", 2)

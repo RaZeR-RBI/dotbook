@@ -51,7 +51,7 @@ namespace DotBook.Backend
         {
             int i = 1;
             WriteLine();
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 Write(style == ListStyle.Bullet ? "* " : $"{i}. ");
                 WriteLine(item);
@@ -78,7 +78,7 @@ namespace DotBook.Backend
         {
             WriteLine($"|{string.Join("|", header)}|");
             WriteLine($"|{Repeat("-|", header.Count)}");
-            foreach(var row in rows)
+            foreach (var row in rows)
                 WriteLine($"|{string.Join("|", row)}|");
             return this;
         }
@@ -112,6 +112,27 @@ namespace DotBook.Backend
             Link(title, url);
             WriteLine();
             return this;
+        }
+
+        protected override StringFormatterBase LinkTree<T>(INode<T> root,
+            Func<T, (string title, string url)> builder)
+        {
+            WriteLine();
+            LinkTreeItem(root, builder);
+            WriteLine();
+            return this;
+        }
+
+        private void LinkTreeItem<T>(INode<T> node,
+            Func<T, (string title, string url)> builder,
+            int level = 1)
+        {
+            Write("".PadLeft((level - 1) * 4, ' '));
+            var link = builder(node.NodeValue);
+            LinkListItem(link.title, link.url + Extension);
+            if (node.ChildrenNodes == null) return;
+            foreach (var child in node.ChildrenNodes)
+                LinkTreeItem(child, builder, level + 1);
         }
     }
 }

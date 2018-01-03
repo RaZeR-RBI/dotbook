@@ -8,29 +8,12 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class PropertyInfo : IMember
+    public class PropertyInfo : MemberInfoBase
     {
-        public string Name { get; }
-        public string FullName { get => $"{Parent.FullName}.{Name}"; }
-
-        public INameable NodeValue => this;
-
-        private SortedSet<Modifier> _modifiers = new SortedSet<Modifier>();
-        public IReadOnlyCollection<Modifier> Modifiers => _modifiers;
-
-        public string Type { get; }
         public AccessorInfo Getter { get; }
         public AccessorInfo Setter { get; }
         public bool HasGetter => Getter != null;
         public bool HasSetter => Setter != null;
-
-        public string Documentation { get; }
-
-        public IMemberContainer Parent { get; }
-
-        public INode<INameable> ParentNode => Parent;
-
-        public IEnumerable<INode<INameable>> ChildrenNodes => null;
 
         public PropertyInfo(PropertyDeclarationSyntax decl, IMemberContainer parent)
         {
@@ -43,7 +26,7 @@ namespace DotBook.Model.Members
                 .WithDefaultVisibility(Parent is InterfaceInfo ?
                     Modifier.Public : Modifier.Private);
 
-            Type = decl.Type.ToString();
+            ReturnType = decl.Type.ToString();
 
             var accessors = decl.AccessorList?.Accessors
                 .Select(a => new AccessorInfo(a, this));
@@ -55,9 +38,12 @@ namespace DotBook.Model.Members
             }
             else if (decl.ExpressionBody != null)
                 Getter = new AccessorInfo(this);
-        }
 
-        public int CompareTo(object obj) =>
-            FullName.CompareTo((obj as PropertyInfo)?.FullName);
+            _parameters = new List<ParameterInfo>();
+            Signature = $"{ReturnType} {Name} " + "{";
+            if (HasGetter) Signature += Getter.ToString();
+            if (HasSetter) Signature += Setter.ToString();
+            Signature += " }";
+        }
     }
 }

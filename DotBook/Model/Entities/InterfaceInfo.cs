@@ -29,7 +29,7 @@ namespace DotBook.Model.Entities
         private SortedSet<IndexerInfo> _indexers = new SortedSet<IndexerInfo>();
         public IReadOnlyCollection<IndexerInfo> Indexers => _indexers;
 
-        private SortedSet<MethodInfoBase> _methods = new SortedSet<MethodInfoBase>();
+        private SortedSet<MemberInfoBase> _methods = new SortedSet<MemberInfoBase>();
         public IReadOnlyCollection<MethodInfo> Methods =>
             _methods.OfType<MethodInfo>().ToList();
 

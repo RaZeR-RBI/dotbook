@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DotBook.Model.Members
 {
-    public abstract class MethodInfoBase : IMember, INode<INameable>
+    public abstract class MemberInfoBase : IMember, INode<INameable>
     {
         public string Name { get; protected set; }
         public string FullName { get => $"{Parent.FullName}.{Name}"; }

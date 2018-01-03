@@ -32,5 +32,9 @@ namespace DotBook.Model.Members
             Type = AccessorType.Getter;
             _modifiers.Add(parent.Modifiers.First());
         }
+
+        public override string ToString() => " " +
+            string.Join(' ', _modifiers.Select(s => s.ToString().ToLower())) + 
+            (IsSetter ? " set" : " get") + ";";
     }
 }

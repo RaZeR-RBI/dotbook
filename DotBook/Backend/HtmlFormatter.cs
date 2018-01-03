@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -14,7 +15,7 @@ namespace DotBook.Backend
         protected string includes = "<link rel=\"stylesheet\" " +
             "href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css\">" +
             "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js\"></script>";
-        
+
         protected string styles = @"
         pre code.hljs {
             display: block;
@@ -124,14 +125,14 @@ namespace DotBook.Backend
         {
             WriteLine("<table>");
             WriteLine("<thead><tr>");
-            foreach(var cell in header)
+            foreach (var cell in header)
                 WriteLine($"<td>{Escape(cell)}</td>");
             WriteLine("</tr></thead>");
             WriteLine("<tbody>");
             foreach (var row in rows)
             {
                 WriteLine("<tr>");
-                foreach(var cell in row)
+                foreach (var cell in row)
                     WriteLine($"<td>{Escape(cell)}</td>");
                 WriteLine("</tr>");
             }
@@ -147,6 +148,25 @@ namespace DotBook.Backend
             if (style.HasFlag(TextStyle.Italic)) result = $"<i>{Escape(result)}</i>";
             Write(result);
             return this;
+        }
+
+        protected override StringFormatterBase LinkTree<T>(INode<T> root, Func<T, (string title, string url)> builder)
+        {
+            LinkTreeItem(root, builder);
+            return this;
+        }
+
+        private void LinkTreeItem<T>(INode<T> node,
+            Func<T, (string title, string url)> builder,
+            int level = 1)
+        {
+            WriteLine("<ul>");
+            var link = builder(node.NodeValue);
+            LinkListItem(link.title, link.url + Extension);
+            if (node.ChildrenNodes != null)
+                foreach (var child in node.ChildrenNodes)
+                    LinkTreeItem(child, builder, level + 1);
+            WriteLine("</ul>");
         }
     }
 }

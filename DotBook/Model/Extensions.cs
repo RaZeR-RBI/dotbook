@@ -78,7 +78,7 @@ namespace DotBook.Model
             SortedSet<FieldInfo> fields = null,
             SortedSet<PropertyInfo> properties = null,
             SortedSet<IndexerInfo> indexers = null,
-            SortedSet<MethodInfoBase> methods = null)
+            SortedSet<MemberInfoBase> methods = null)
         {
 
             // ugly but works

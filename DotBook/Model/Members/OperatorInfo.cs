@@ -7,7 +7,7 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class OperatorInfo : MethodInfoBase
+    public class OperatorInfo : MemberInfoBase
     {
         public OperatorInfo(OperatorDeclarationSyntax decl, IMemberContainer parent)
         {

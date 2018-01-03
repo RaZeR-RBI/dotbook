@@ -9,7 +9,7 @@ using DotBook.Model.Entities;
 
 namespace DotBook.Model.Members
 {
-    public class MethodInfo : MethodInfoBase
+    public class MethodInfo : MemberInfoBase
     {
         public MethodInfo(MethodDeclarationSyntax decl, IMemberContainer parent)
         {

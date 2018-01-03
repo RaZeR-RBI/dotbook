@@ -8,7 +8,7 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class IndexerInfo : MethodInfoBase
+    public class IndexerInfo : MemberInfoBase
     {
         public AccessorInfo Getter { get; }
         public AccessorInfo Setter { get; }

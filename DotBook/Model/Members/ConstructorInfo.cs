@@ -7,7 +7,7 @@ using static DotBook.Utils.Common;
 
 namespace DotBook.Model.Members
 {
-    public class ConstructorInfo : MethodInfoBase
+    public class ConstructorInfo : MemberInfoBase
     {
         public ConstructorInfo(ConstructorDeclarationSyntax decl, 
             IMemberContainer parent)
