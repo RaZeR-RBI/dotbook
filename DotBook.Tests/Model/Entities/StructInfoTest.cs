@@ -108,11 +108,11 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.Equal(3, fields.Count);
             Assert.Contains(fields,
-                f => f.Name == "IntField" && f.Type == "int");
+                f => f.Name == "IntField" && f.ReturnType == "int");
             Assert.Contains(fields,
-                f => f.Name == "StringField" && f.Type == "string");
+                f => f.Name == "StringField" && f.ReturnType == "string");
             Assert.Contains(fields,
-                f => f.Name == "MyTuple" && f.Type == "(byte, long)");
+                f => f.Name == "MyTuple" && f.ReturnType == "(byte, long)");
         }
         
         [Fact]
@@ -133,9 +133,9 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.Equal(2, properties.Count);
             Assert.Contains(properties,
-                p => p.Name == "IntProp" && p.Type == "int");
+                p => p.Name == "IntProp" && p.ReturnType == "int");
             Assert.Contains(properties,
-                p => p.Name == "StringProp" && p.Type == "string");
+                p => p.Name == "StringProp" && p.ReturnType == "string");
         }
 
         [Fact]

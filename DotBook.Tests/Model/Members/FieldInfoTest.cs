@@ -77,9 +77,9 @@ namespace DotBook.Tests.Model.Members
 
             Assert.Equal(2, fields.Count);
             Assert.Contains(fields, 
-                f => f.Name == "SomeInt" && f.Value == null && f.Type == "int");
+                f => f.Name == "SomeInt" && f.Value == null && f.ReturnType == "int");
             Assert.Contains(fields, 
-                f => f.Name == "DefinedLong" && f.Value == "1337" && f.Type == "long");
+                f => f.Name == "DefinedLong" && f.Value == "1337" && f.ReturnType == "long");
         }
         
         [Fact]

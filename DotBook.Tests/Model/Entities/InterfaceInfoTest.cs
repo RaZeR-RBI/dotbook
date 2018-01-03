@@ -111,9 +111,9 @@ namespace DotBook.Tests.Model.Entities
 
             Assert.Equal(2, properties.Count);
             Assert.Contains(properties,
-                p => p.Name == "IntProp" && p.Type == "int");
+                p => p.Name == "IntProp" && p.ReturnType == "int");
             Assert.Contains(properties,
-                p => p.Name == "StringProp" && p.Type == "string");
+                p => p.Name == "StringProp" && p.ReturnType == "string");
         }
 
         [Fact]
