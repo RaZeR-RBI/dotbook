@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using static DotBook.Logger;
+using System.Text.RegularExpressions;
 
 namespace DotBook.Processing
 {
@@ -12,6 +13,22 @@ namespace DotBook.Processing
     {
         public IEnumerable<XmlNode> Nodes { get; }
 
+        private static List<(string start, string end)> escapeAnchors =
+            new List<(string start, string end)>()
+            {
+                ("<c>", @"</c>"),
+                ("<code>", @"</code>"),
+                (" cref=\"", "\"")
+            };
+
+        private static List<(string src, string replacement)> escapedSymbols =
+            new List<(string src, string replacement)>()
+            {
+                ("<", "&lt;"),
+                (">", "&gt;"),
+            };
+
+        /// TODO: Add symbol escaping
         public XmlDocumentation(string source)
         {
             if (source == null) source = "";
@@ -19,7 +36,7 @@ namespace DotBook.Processing
             var rootOpen = "<root>";
             var rootClose = "</root>";
 
-            var docSource = $"{header}{rootOpen}{source}{rootClose}";
+            var docSource = $"{header}{rootOpen}{Escape(source)}{rootClose}";
 
             var doc = new XmlDocument();
             doc.LoadXml(docSource);
@@ -40,6 +57,34 @@ namespace DotBook.Processing
             }
 
             Nodes = root.ChildNodes.Cast<XmlNode>();
+        }
+
+        private string Escape(string source)
+        {
+            foreach (var anchors in escapeAnchors)
+                source = Replace(source, anchors, escapedSymbols);
+            return source;
+        }
+
+        private string Replace(string input, 
+            (string from, string to) anchors,
+            IEnumerable<(string from, string to)> replacements)
+        {
+            var startIndex = input.IndexOf(anchors.from);
+            while (startIndex != -1)
+            {
+                startIndex += anchors.from.Length;
+                var endIndex = input.IndexOf(anchors.to, startIndex + 1);
+                if (endIndex == -1) break;
+                var length = endIndex - startIndex;
+                var fragment = input.Substring(startIndex, length);
+                foreach(var replacement in replacements)
+                    fragment = fragment.Replace(replacement.from, replacement.to);
+                
+                input = input.Substring(0, startIndex) + fragment + input.Substring(endIndex);
+                startIndex = input.IndexOf(anchors.from, endIndex);
+            }
+            return input;
         }
 
         public Optional<XmlNode> GetSummary() =>

@@ -10,6 +10,7 @@ using Simplicity;
 using System.Linq;
 using DotBook.Model.Members;
 using static DotBook.Processing.EntityTypeResolver;
+using static DotBook.Logger;
 
 namespace DotBook.Backend
 {
@@ -50,7 +51,7 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase Link(string title, string url);
         protected abstract StringFormatterBase LinkListItem(string title, string url);
         protected abstract StringFormatterBase LinkList(IDictionary<string, string> links);
-        protected abstract StringFormatterBase LinkTree<T>(INode<T> root, 
+        protected abstract StringFormatterBase LinkTree<T>(INode<T> root,
             Func<T, (string title, string url)> builder);
         protected abstract StringFormatterBase Image(string url, string title = "");
         protected abstract StringFormatterBase Table(List<string> header,
@@ -67,8 +68,9 @@ namespace DotBook.Backend
             if (entity.IsRoot())
             {
                 Header("API Documentation");
-                foreach(var child in entity.ChildrenNodes)
-                    LinkTree(child, e => (e.Name, e.Link));
+                foreach (var child in entity.ChildrenNodes)
+                    if (child.ChildrenNodes.Any())
+                        LinkTree(child, e => (e.Name, e.Link));
                 return Result();
             }
 
@@ -113,6 +115,7 @@ namespace DotBook.Backend
             HorizontalRule();
 
             // Summary
+            Info($"Processing {name}");
             var doc = new XmlDocumentation(item.Documentation);
             doc.GetSummary()
                 .IfPresent(p => ParagraphFrom(p))
@@ -176,7 +179,7 @@ namespace DotBook.Backend
 
             doc.GetSeeAlso()
                 .IfAny(() => Header("See also", 2))
-                .ForEach(m => MemberLinkList(m));
+                .ForEach(m => MemberLinkList(m, warnIfNotFound: true));
 
             HorizontalRule()
                 .Link("Back to index", "index" + Extension);
@@ -252,14 +255,20 @@ namespace DotBook.Backend
         private StringFormatterBase MemberLink(string memberName)
         {
             if (memberName == null || memberName == "") return this;
-            Link(memberName, entity.GetLink(memberName) + Extension);
+            var link = entity.GetLink(memberName);
+            if (link == "#") Warning($"Could not resolve link for {memberName}");
+            Link(memberName, link + Extension);
             return this;
         }
 
-        private StringFormatterBase MemberLinkList(string memberName)
+        private StringFormatterBase MemberLinkList(string memberName,
+            bool warnIfNotFound = false)
         {
             if (memberName == null || memberName == "") return this;
-            LinkListItem(memberName, entity.GetLink(memberName) + Extension);
+            var link = entity.GetLink(memberName);
+            if (warnIfNotFound && link == "#")
+                Warning($"Could not resolve link for {memberName}");
+            LinkListItem(memberName, link + Extension);
             return this;
         }
 

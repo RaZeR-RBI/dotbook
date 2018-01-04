@@ -83,7 +83,12 @@ namespace DotBook.Processing
                 ??
                 this.LocateClosestRelative(
                     n => n?.NodeValue?.Name == name,
-                    out _)?.NodeValue;
+                    out _)?.NodeValue
+                ??
+                this.GetRoot()
+                .Descendants(
+                    n => n?.NodeValue?.Name == name)
+                    .FirstOrDefault()?.NodeValue;
 
 
         public string GetLink(string fullName) =>

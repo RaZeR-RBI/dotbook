@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Web;
 using Xunit;
+using System.Linq;
+using static System.Web.HttpUtility;
 
 namespace DotBook.Tests.Processing
 {
@@ -54,6 +57,33 @@ namespace DotBook.Tests.Processing
 
             Assert.True(withoutSummary);
             Assert.True(withSummary);
+        }
+
+        [Fact]
+        public void ShouldEscapeCodeSymbols()
+        {
+            var summary = "Something. See <see cref=\"MyType<T>\" />";
+            var example = "<code>var obj = new MyType<int>()</code>";
+            var see = "<seealso cref=\"MyType<T>\"/>";
+            var hasSummary = false;
+
+            var source = $"<summary>{summary}</summary>" +
+                $"<example>{example}</example>" +
+                see;
+            
+            var doc = Act(source);
+
+            doc.GetSummary().IfPresent(s => {
+                hasSummary = true;
+                Assert.Equal(summary, HtmlDecode(s.InnerXml));
+            });
+            Assert.True(hasSummary);
+            var examples = doc.GetExamples();
+            var seealso = doc.GetSeeAlso();
+            Assert.Single(examples);
+            Assert.Equal(example, HtmlDecode(examples.First().InnerXml));
+            Assert.Single(seealso);
+            Assert.Equal("MyType<T>", seealso.First());
         }
     }
 }
