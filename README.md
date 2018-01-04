@@ -9,7 +9,7 @@ Currently supported formats are:
 1. Add the following item to your .csproj:
 ```
   <ItemGroup>
-     <DotNetCliToolReference Include="DotBook" Version="0.5.3-dev"/>
+     <DotNetCliToolReference Include="DotBook" Version="0.5.4-dev"/>
   </ItemGroup>
 ```
 
