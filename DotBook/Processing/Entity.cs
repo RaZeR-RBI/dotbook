@@ -78,16 +78,16 @@ namespace DotBook.Processing
         public Entity GetByName(string name) =>
             this.GetRoot()
                 .Descendants(
-                    n => n?.NodeValue?.FullName == name)
+                    n => n?.NodeValue?.FullName.Despace() == name.Despace())
                     .FirstOrDefault()?.NodeValue
                 ??
                 this.LocateClosestRelative(
-                    n => n?.NodeValue?.Name == name,
+                    n => n?.NodeValue?.Name.Despace() == name.Despace(),
                     out _)?.NodeValue
                 ??
                 this.GetRoot()
                 .Descendants(
-                    n => n?.NodeValue?.Name == name)
+                    n => n?.NodeValue?.Name.Despace() == name.Despace())
                     .FirstOrDefault()?.NodeValue;
 
 

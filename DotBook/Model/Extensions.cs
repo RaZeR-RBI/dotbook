@@ -114,6 +114,9 @@ namespace DotBook.Model
                 .Replace("( ", "(")
                 .Replace(" )", ")");
 
+        public static string Despace(this string input) =>
+            input.Replace(" ", "");
+
         public static IEnumerable<T> ToEnum<T>(this IEnumerable<string> values)
             where T : struct, IComparable, IFormattable, IConvertible =>
             values.Select(s => (T)Enum.Parse(typeof(T), s, true));

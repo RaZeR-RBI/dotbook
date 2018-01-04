@@ -147,9 +147,24 @@ namespace DotBook.Backend
             // If it is a property, print info about it's value (if defined)
             item.MaybeIs<IDocumentationNode, PropertyInfo>()
                 .IfPresent(p => doc.GetValue().IfPresent(n =>
-                        Header("Value")
+                        Header("Value", 3)
                         .ParagraphFrom(n)
                     ));
+
+            // If it's an enum, print declared values
+            item.MaybeIs<IDocumentationNode, EnumInfo>()
+                .IfPresent(p =>
+                {
+                    Header("Enumeration", 3)
+                    .Text("Underlying type:", TextStyle.Bold)
+                    .Text(" ")
+                    .Text(p.UnderlyingType);
+                    var values = p.Values.Select(v => $"{v}");
+                    ParagraphStart()
+                    .Text("Values:")
+                    .List(values)
+                    .ParagraphEnd();
+                });
 
             // Type parameters
             doc.GetTypeParameters()

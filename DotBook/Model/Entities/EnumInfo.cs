@@ -85,6 +85,9 @@ namespace DotBook.Model.Entities
 
             public int CompareTo(object obj) =>
                 Key.CompareTo((obj as EnumValue)?.Key);
+
+            public override string ToString() =>
+                $"{Key}" + (Value != null && Value != "" ? $" = {Value}" : "");
         }
     }
 }

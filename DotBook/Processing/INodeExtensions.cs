@@ -31,7 +31,7 @@ namespace DotBook.Processing
                 if (predicate(node)) yield return node;
                 if (node.ChildrenNodes != null)
                     foreach (var n in node.ChildrenNodes)
-                        if (predicate(n)) nodes.Push(n);
+                        nodes.Push(n);
             }
         }
 
