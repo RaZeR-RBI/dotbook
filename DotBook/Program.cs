@@ -116,7 +116,6 @@ namespace DotBook
             var entities = sourceInfo.WithVisibility(modifiers: Modifier.Public);
             File.WriteAllText(Path.Combine(output, "structure.json"), entities.AsJson());
 
-            // TODO: Add output format selection
             var format = options.Format;
             Info("Writing documentation files");
             format.BeginWritingAt(output)
