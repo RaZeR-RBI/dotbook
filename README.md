@@ -1,3 +1,7 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/47l1253qq6m7h7iw/branch/master?svg=true)](https://ci.appveyor.com/project/RaZeR-RawByte/dotbook/branch/master) [![GitHub license](https://img.shields.io/github/license/RaZeR-RBI/dotbook.svg)](https://github.com/RaZeR-RBI/dotbook/blob/master/LICENSE) [![NuGet Version](https://img.shields.io/nuget/v/DotBook.svg)](https://www.nuget.org/packages/DotBook) [![NuGet](https://img.shields.io/nuget/dt/DotBook.svg)]()
+
+---
+
 # About the project
 DotBook is a .NET CLI tool for human-friendly documentation generation from C# source files.
 
@@ -8,10 +12,10 @@ Currently supported formats are:
 [Live demo](https://razer-rbi.github.io/diffstore)
 
 # How to use
-1. Add the following item to your .csproj:
+1. Add the following item to your .csproj (replace the version number with [an actual one](https://www.nuget.org/packages/DotBook)):
 ```
   <ItemGroup>
-     <DotNetCliToolReference Include="DotBook" Version="0.5.5-dev"/>
+     <DotNetCliToolReference Include="DotBook" Version="(insert-version-here)"/>
   </ItemGroup>
 ```
 
