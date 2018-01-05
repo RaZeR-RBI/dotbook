@@ -9,7 +9,7 @@ init:
       }
       else
       {
-        Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+        Update-AppveyorBuild -Version "0.0.0-dev-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
       }
 dotnet_csproj:
   patch: true
