@@ -9,7 +9,7 @@ using DotBook.Processing;
 
 namespace DotBook.Model
 {
-    public class SourceInfo : INameable, INode<INameable>
+    public class SourceInfo : IDocumentationNode
     {
         private SortedSet<NamespaceInfo> _namespaces = new SortedSet<NamespaceInfo>();
         public IReadOnlyCollection<NamespaceInfo> Namespaces => _namespaces;
@@ -22,6 +22,10 @@ namespace DotBook.Model
         public string FullName => "";
 
         public INameable NodeValue => this;
+
+        public string Documentation { get; set; }
+
+        public string Preface => Documentation;
 
         public SourceInfo(List<CompilationUnitSyntax> roots) =>
             roots.ForEach(Process);

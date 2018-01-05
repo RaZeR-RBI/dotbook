@@ -29,7 +29,7 @@ namespace DotBook.Model.Entities
         private SortedSet<InterfaceInfo> _interfaces = new SortedSet<InterfaceInfo>();
         public IReadOnlyCollection<InterfaceInfo> Interfaces => _interfaces;
 
-        public string Documentation { get; private set; }
+        public string Documentation { get; set; }
 
         public IReadOnlyCollection<IMemberContainer> Types => 
             CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);

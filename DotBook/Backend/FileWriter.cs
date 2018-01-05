@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using DotBook.Model;
 using DotBook.Processing;
+using static DotBook.Program;
+using static DotBook.Logger;
 
 namespace DotBook.Backend
 {
@@ -34,6 +36,19 @@ namespace DotBook.Backend
             if (entity.ChildrenNodes != null)
                 foreach (var child in entity.ChildrenNodes)
                     Write(child.NodeValue, visibilities);
+        }
+
+        public FileWriter IncludePreface(Entity entity, 
+            string filename, ApplicationArguments options)
+        {
+            var path = Path.Combine(options.InputDirectory, filename + extension);
+            if (File.Exists(path))
+            {
+                var prefaceContents = File.ReadAllText(path);
+                Success($"Found {filename + extension}, including it in the index");
+                (entity.GetRoot() as Entity).Base.Documentation = prefaceContents;
+            } else Info($"No {filename + extension} found");
+            return this;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace DotBook.Backend
 {
     internal class HtmlFormatter : StringFormatterBase
     {
-        protected override string Extension => ".html";
+        public override string Extension => ".html";
 
         // highlight.js related stuff
         // TODO Remove hardcode and make it configurable

@@ -53,7 +53,7 @@ namespace DotBook.Model.Entities
         private SortedSet<string> _baseTypes = new SortedSet<string>();
         public IReadOnlyCollection<string> BaseTypes => _baseTypes;
 
-        public string Documentation { get; private set; }
+        public string Documentation { get; set; }
 
         public IReadOnlyCollection<IMemberContainer> Types =>
             CastJoin<IMemberContainer>(_classes, _structs, _enums, _interfaces);

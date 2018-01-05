@@ -6,6 +6,6 @@ namespace DotBook.Model
 {
     public interface IDocumentable
     {
-        string Documentation { get; }
+        string Documentation { get; set; }
     }
 }

@@ -59,22 +59,29 @@ namespace DotBook.Backend
         protected abstract StringFormatterBase CodeInline(string code);
         protected abstract StringFormatterBase Code(string code);
 
-        protected abstract string Extension { get; }
+        public abstract string Extension { get; }
 
         public string Process(Entity entity, IEnumerable<Modifier> visibilities)
         {
             Start(entity);
+            var item = entity.Base;
 
             if (entity.IsRoot())
             {
+                // Include preface in the index if it exists
+                if (item?.Documentation != null)
+                    WriteLine(item.Documentation);
+
                 Header("API Documentation");
                 foreach (var child in entity.ChildrenNodes)
                     if (child.ChildrenNodes.Any())
                         LinkTree(child, e => (e.Name, e.Link));
+
+                HorizontalRule()
+                .Link("Generated with DotBook", "https://github.com/RaZeR-RBI/dotbook")
+                .WriteLine();
                 return Result();
             }
-
-            var item = entity.Base;
             var name = item.Name;
             var fullName = item.FullName;
             // Name

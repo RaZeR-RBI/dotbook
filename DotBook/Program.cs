@@ -95,7 +95,9 @@ namespace DotBook
 
         private static void Run(ApplicationArguments options)
         {
-            var input = options.InputDirectory ?? Directory.GetCurrentDirectory();
+            if (options.InputDirectory == null)
+                options.InputDirectory = Directory.GetCurrentDirectory();
+            var input = options.InputDirectory;
             var output = options.OutputDirectory;
             if (!Directory.Exists(output))
                 Directory.CreateDirectory(output);
@@ -118,6 +120,7 @@ namespace DotBook
             var format = options.Format;
             Info("Writing documentation files");
             format.BeginWritingAt(output)
+                .IncludePreface(entities, "README", options)
                 .Write(entities, new[] { Modifier.Public });
 
             Success($"Generated {entities.Descendants().Count()} documentation files");

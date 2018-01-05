@@ -10,7 +10,7 @@ namespace DotBook.Backend
 {
     internal sealed class MarkdownFormatter : StringFormatterBase
     {
-        protected override string Extension => ".md";
+        public override string Extension => ".md";
 
         protected override StringFormatterBase Header(string title, int level = 1)
         {

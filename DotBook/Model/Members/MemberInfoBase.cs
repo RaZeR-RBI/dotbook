@@ -32,7 +32,7 @@ namespace DotBook.Model.Members
 
         public string ReturnType { get; protected set; }
 
-        public string Documentation { get; protected set; }
+        public string Documentation { get; set; }
 
         public INode<INameable> ParentNode => Parent;
 

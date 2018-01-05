@@ -23,7 +23,7 @@ namespace DotBook.Model.Entities
         private List<EnumValue> _values = new List<EnumValue>();
         public IReadOnlyCollection<EnumValue> Values => _values;
 
-        public string Documentation { get; }
+        public string Documentation { get; set; }
 
         public IReadOnlyCollection<IMember> Members => null;
         public ITypeContainer Parent { get; }
@@ -73,7 +73,7 @@ namespace DotBook.Model.Entities
                 new List<Modifier>() { Modifier.Public };
             public IReadOnlyCollection<Modifier> Modifiers => _visibility;
 
-            public string Documentation { get; }
+            public string Documentation { get; set; }
 
             public EnumValue(EnumMemberDeclarationSyntax decl, EnumInfo parent)
             {
