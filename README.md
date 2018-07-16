@@ -11,16 +11,23 @@ Currently supported formats are:
 
 [Live demo](https://razer-rbi.github.io/diffstore)
 
-# How to use
-1. Add the following item to your .csproj (replace the version number with [an actual one](https://www.nuget.org/packages/DotBook)):
+# Installation (.NET Core 2.1 and later)
+```
+dotnet tool install -g DotBook
+```
+
+# Installation (previous versions without 'tool install')
+1. Add the following item to your .csproj:
 ```
   <ItemGroup>
-     <DotNetCliToolReference Include="DotBook" Version="(insert-version-here)"/>
+     <DotNetCliToolReference Include="DotBook" Version="0.5.5"/>
   </ItemGroup>
 ```
 
 2. Run the ```dotnet restore``` command
-3. Use it! Run ```dotnet doc``` in the project folder to use default settings or ```dotnet doc --help``` for help.
+
+# How to use
+Run ```dotnet doc``` in the project folder to use default settings or ```dotnet doc --help``` for help.
 
 **Tip:** If you have a README.md or README.html (depending on the format) at the source root, it will be included at the index page before the API Documentation.
 

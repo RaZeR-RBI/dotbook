@@ -10,7 +10,6 @@ using Simplicity;
 using System.Linq;
 using DotBook.Model.Members;
 using static DotBook.Processing.EntityTypeResolver;
-using static DotBook.Logger;
 
 namespace DotBook.Backend
 {
