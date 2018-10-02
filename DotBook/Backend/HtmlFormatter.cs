@@ -12,7 +12,8 @@ namespace DotBook.Backend
 
         // highlight.js related stuff
         // TODO Remove hardcode and make it configurable
-        protected string includes = "<link rel=\"stylesheet\" " +
+        protected string includes = "<link rel=\"stylesheet\" href=\"index.css\">" +
+            "<link rel=\"stylesheet\" " +
             "href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css\">" +
             "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js\"></script>";
 
