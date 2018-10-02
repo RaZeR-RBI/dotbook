@@ -221,6 +221,7 @@ namespace DotBook.Backend
                 .With(x => x.Name == "see",
                     x => MemberLink(x.AttributeValue("cref"))
                 )
+                .Else(x => this)
                 .Do();
             return this;
         }
