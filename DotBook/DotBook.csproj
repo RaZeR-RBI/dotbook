@@ -6,7 +6,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>dotnet-doc</AssemblyName>
     <PackageId>DotBook</PackageId>
-    <PackageVersion>0.5.6-dev</PackageVersion>
+    <PackageVersion>0.5.9-dev</PackageVersion>
     <PackageType>DotnetCliTool</PackageType>
     <Authors>Vilkov Adel</Authors>
     <Summary>Easy and cross-platform documentation generator</Summary>
