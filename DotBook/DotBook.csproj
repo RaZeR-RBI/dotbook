@@ -14,7 +14,15 @@
     <PackageProjectUrl>https://github.com/RaZeR-RBI/dotbook</PackageProjectUrl>
     <PackageTags>net;netcore;documentation;xml;generator;doc;docstring;tool</PackageTags>
     <RepositoryUrl>https://github.com/RaZeR-RBI/dotbook</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.1" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.4.0" />
