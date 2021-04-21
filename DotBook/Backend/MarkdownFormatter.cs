@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using static System.Linq.Enumerable;
 
 namespace DotBook.Backend
@@ -63,13 +64,13 @@ namespace DotBook.Backend
 
         protected override StringFormatterBase Link(string title, string url)
         {
-            Write($"[{title}]({url})");
+            Write($"[{Escape(title)}]({url})");
             return this;
         }
 
         protected override StringFormatterBase Image(string url, string title = "")
         {
-            Write($"![{title}]({url})");
+            Write($"![{Escape(title)}]({url})");
             return this;
         }
 
@@ -134,5 +135,7 @@ namespace DotBook.Backend
             foreach (var child in node.ChildrenNodes)
                 LinkTreeItem(child, builder, level + 1);
         }
+
+        private string Escape(string str) => HttpUtility.HtmlEncode(str);
     }
 }
