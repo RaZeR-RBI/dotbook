@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2017 Preview
+image: Visual Studio 2019
 # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
 init:
   - ps: >-
